@@ -74,49 +74,61 @@ int main() {
 	scanf("%d", &float_size);
 
 	if (float_size < 4) {
-		if (err_cnt.error_cnt_float_size == 1) {
+		if (err_cnt.error_cnt_float_size == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (err_cnt.error_cnt_float_size > 0) {
 			printf(RED "ERROR: " WHITE "Invalid float size (PLEASE ENTER A FLOAT SIZE > 3)\n" CRESET);
 		}
 		else {
 			printf(RED "ERROR: " WHITE "Invalid float size\n" CRESET);
-			err_cnt.error_cnt_float_size++;
 		}
+		err_cnt.error_cnt_float_size++;
 		goto SET_FLOAT_SIZE;
 	}
 
 	SET_EXPONENT_SIZE:
-	printf(PURPLE "Enter exponent size: " CRESET);
+	printf(PURPLE "\nEnter exponent size: " CRESET);
 	scanf("%d", &exponent_size);
 
 	if (exponent_size < 2 || exponent_size > float_size-2) {
-		if (err_cnt.error_cnt_exponent_size == 1) {
+		if (err_cnt.error_cnt_exponent_size == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (err_cnt.error_cnt_exponent_size > 0) {
 			printf(RED "ERROR: " WHITE "Invalid exponent size (PLEASE ENTER AN EXPONENT SIZE > 2 && < FLOAT_SIZE -1)\n" CRESET);
 		}
 		else {
-			printf(RED "ERROR" WHITE "invalid exponent size\n" CRESET);
-			err_cnt.error_cnt_exponent_size++;
+			printf(RED "ERROR: " WHITE "Invalid exponent size\n" CRESET);
 		}
+		err_cnt.error_cnt_exponent_size++;
 		goto SET_EXPONENT_SIZE;
 	}
 
 	SET_MANTISSA_SIZE:
-	printf(PURPLE "Enter mantissa size: " CRESET);
+	printf(PURPLE "\nEnter mantissa size: " CRESET);
 	scanf("%d", &mantissa_size);
 
 	if (mantissa_size <= 0 || exponent_size + mantissa_size != float_size-1) {
-		if (err_cnt.error_cnt_mantissa_size == 1) {
+		if (err_cnt.error_cnt_mantissa_size == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (err_cnt.error_cnt_mantissa_size > 0) {
 			printf(RED "ERROR: " WHITE "Invalid mantissa size (PLEASE ENTER A MANTISSA SIZE > 0 && < (FLOAT_SIZE - EXPONENT_SIZE -1))\n" CRESET);
 		}
 		else {
 			printf(RED "ERROR: " WHITE "Invalid mantissa size\n" CRESET);
-			err_cnt.error_cnt_mantissa_size++;
 		}
+		err_cnt.error_cnt_mantissa_size++;
 		goto SET_MANTISSA_SIZE;
 	}
 
 	puts("");
     SET_CUSTOM_BIAS:
-	printf(BLUE "Do you want a custom bias? (Y/N) " CRESET);
+	printf(BLUE "\nDo you want a custom bias? (Y/N) " CRESET);
 	scanf(" %c", &custom_bias);
 
 	if (custom_bias == 'y' || custom_bias == 'Y') {
@@ -129,13 +141,17 @@ int main() {
 	}
 	else {
 		bias = '0';
-		if (err_cnt.error_cnt_bias_size == 1) {
+		if (err_cnt.error_cnt_bias_size == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}
+		if (err_cnt.error_cnt_bias_size > 0) {
 			printf(RED "ERROR: " WHITE "Unknown answer (PLEASE RESPOND \'Y\' OR \'y\' FOR YES, AND \'N\' OR \'n\' FOR NO)\n" CRESET);
 		}
 		else {
 			printf(RED "ERROR: " WHITE "Unknown answer\n" CRESET);
-			err_cnt.error_cnt_bias_size++;
 		}
+		err_cnt.error_cnt_bias_size++;
 		goto SET_CUSTOM_BIAS;
 	}
 
