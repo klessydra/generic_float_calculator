@@ -27,6 +27,9 @@ typedef struct{
 	unsigned int error_cnt_exponent_size;
 	unsigned int error_cnt_mantissa_size;
 	unsigned int error_cnt_bias_size;
+	unsigned int error_cnt_op_type;
+	unsigned int error_cnt_conv_type;
+	unsigned int error_cnt_round_mode;
 } error_count;
 
 typedef union{
@@ -68,9 +71,14 @@ int main() {
 	err_cnt.error_cnt_exponent_size = 0;
 	err_cnt.error_cnt_mantissa_size = 0;
 	err_cnt.error_cnt_bias_size = 0;
+	err_cnt.error_cnt_op_type = 0;
+	err_cnt.error_cnt_conv_type = 0;
+	err_cnt.error_cnt_round_mode = 0;
+
+	printf("\n");
 
 	SET_FLOAT_SIZE:
-	printf(PURPLE "\nEnter Float Size: " CRESET);
+	printf(PURPLE "Enter Float Size: " CRESET);
 	scanf("%d", &float_size);
 
 	if (float_size < 4) {
@@ -85,11 +93,12 @@ int main() {
 			printf(RED "ERROR: " WHITE "Invalid float size\n" CRESET);
 		}
 		err_cnt.error_cnt_float_size++;
+		printf("\n");
 		goto SET_FLOAT_SIZE;
 	}
 
 	SET_EXPONENT_SIZE:
-	printf(PURPLE "\nEnter exponent size: " CRESET);
+	printf(PURPLE "Enter exponent size: " CRESET);
 	scanf("%d", &exponent_size);
 
 	if (exponent_size < 2 || exponent_size > float_size-2) {
@@ -104,11 +113,12 @@ int main() {
 			printf(RED "ERROR: " WHITE "Invalid exponent size\n" CRESET);
 		}
 		err_cnt.error_cnt_exponent_size++;
+		printf("\n");
 		goto SET_EXPONENT_SIZE;
 	}
 
 	SET_MANTISSA_SIZE:
-	printf(PURPLE "\nEnter mantissa size: " CRESET);
+	printf(PURPLE "Enter mantissa size: " CRESET);
 	scanf("%d", &mantissa_size);
 
 	if (mantissa_size <= 0 || exponent_size + mantissa_size != float_size-1) {
@@ -123,6 +133,7 @@ int main() {
 			printf(RED "ERROR: " WHITE "Invalid mantissa size\n" CRESET);
 		}
 		err_cnt.error_cnt_mantissa_size++;
+		printf("\n");
 		goto SET_MANTISSA_SIZE;
 	}
 
@@ -163,6 +174,8 @@ int main() {
 	//double num_upper_bound = pow(2,bias)* mantissa_upper_bound;// + mantissa_upper_bound);
 	//printf(CYAN "upper bound = %f\n\n" CRESET, num_upper_bound);
 
+	SET_OP_TYPE:
+
 	printf("\nINSERT OP TYPE:\n"
 				 "	(0)  GENERATE ALL\n"
 				 "	(1)  GENERATE NUMBERS\n"
@@ -179,6 +192,23 @@ int main() {
 				);
 	scanf("%d", &op_type);
 
+	if (op_type < 0 || op_type > 10) {
+		if (err_cnt.error_cnt_op_type == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (err_cnt.error_cnt_op_type > 0) {
+			printf(RED "ERROR: " WHITE "Invalid op type (PLEASE ENTER A VALID OP TYPE NUMBER [0-10]\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Invalid op type\n" CRESET);
+		}
+		err_cnt.error_cnt_op_type++;
+		goto SET_OP_TYPE;
+	}
+
+	SET_CONV_TYPE:
+
 	if (op_type == 8) {
 		printf("\nINSERT CONVERSION TYPE:\n"
 					 "	(1) FLOAT_%d_1 to FLOAT_%d_2\n"
@@ -194,11 +224,28 @@ int main() {
 
 		scanf("%d", &conv_type);
 
+		if (conv_type < 1 || conv_type > 7) {
+			if (err_cnt.error_cnt_conv_type == 10) {
+				printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+				exit(-1);
+			}		
+			if (err_cnt.error_cnt_conv_type > 0) {
+				printf(RED "ERROR: " WHITE "Invalid conversion type (PLEASE ENTER A VALID CONV TYPE NUMBER [1-7]\n" CRESET);
+			}
+			else {
+				printf(RED "ERROR: " WHITE "Invalid conversion type\n" CRESET);
+			}
+			err_cnt.error_cnt_conv_type++;
+			goto SET_CONV_TYPE;
+		}
+
 		if (conv_type == 4 || conv_type == 5) {
 			printf("\n\nINSERT INTEGER WIDTH: ");
 			scanf("%d", &integer_width);
 		}
 	}
+
+	SET_ROUNDING_MODE:
 
 	if (op_type != 1 && op_type != 10) {
 		printf("\nINSERT ROUNDING MODE:\n"
@@ -210,6 +257,21 @@ int main() {
 					 "\nROUNDING MODE: "
 					);
 		scanf("%d", &round_type);
+
+		if (round_type < 1 || round_type > 5) {
+			if (err_cnt.error_cnt_round_mode == 10) {
+				printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+				exit(-1);
+			}		
+			if (err_cnt.error_cnt_round_mode > 0) {
+				printf(RED "ERROR: " WHITE "Invalid rounding mode (PLEASE ENTER A VALID ROUND MODE NUMBER [1-5]\n" CRESET);
+			}
+			else {
+				printf(RED "ERROR: " WHITE "Invalid rounding mode\n" CRESET);
+			}
+			err_cnt.error_cnt_round_mode++;
+			goto SET_ROUNDING_MODE;
+		}
 	}
 
 	uint64_t number_of_floats = (uint64_t) pow(2,float_size);
@@ -382,7 +444,6 @@ int main() {
 		hex_to_float(f1, float_size, exponent_size, mantissa_size, bias, &f1_out);
 		printf(CYAN "FLOAT = %lf (0x%lx)\n" CRESET, f1_out, f1.int_i);
 	}
-
 	return 0;
 };
 
@@ -462,6 +523,7 @@ int float_to_hex(number f, int float_size, int exponent_size, int mantissa_size,
 	double mantissa_lower;
 	double mantissa_upper;
 	double mantissa_middle;
+	double mantissa;
 	int exact = 0;
 	if (isnan(f.float_i)) {
 		// Generate a qnan (Quiet NaN)
@@ -482,8 +544,7 @@ int float_to_hex(number f, int float_size, int exponent_size, int mantissa_size,
 	else {
 		for (int i=-(bias+mantissa_size-1); i<=bias; i++) {
 			if (fabs(f.float_i) >= pow(2,i) && fabs(f.float_i) < pow(2,i+1)) {
-				//printf(CYAN "EXPONENT: %d\n", i);
-				double mantissa;
+				printf(CYAN "EXPONENT: %d\n", i);
 				if (i < -(bias-1)) {  // denormalized exponent
 					exponent_extract = 0;
 					mantissa = fabs(f.float_i) * pow(2,bias-1);
@@ -497,7 +558,7 @@ int float_to_hex(number f, int float_size, int exponent_size, int mantissa_size,
 					normalized   = 1;
 				}
 				exponent_rounded = exponent_extract;
-				//printf(CYAN "MANTISSA: %f\n", mantissa);
+				printf(CYAN "MANTISSA: %f\n", mantissa);
 				mantissa_lower = mantissa_lookup;
 				mantissa_upper = 1.0 / pow(2,mantissa_size);
 				mantissa_middle = (mantissa_lower + mantissa_upper) / 2;
@@ -515,13 +576,19 @@ int float_to_hex(number f, int float_size, int exponent_size, int mantissa_size,
 					}
 					mantissa_extract += 1;
 				}
-				//printf(CYAN "mnt_lower= %lf, mnt_upper = %lf, mnt_middle = %lf \n", mantissa_lower, mantissa_upper, mantissa_middle);
-				//printf(CYAN "exp_rounded= %ld\n", exponent_rounded);
-				//printf(CYAN "mnt_rounded= %lx\n", mantissa_rounded);
-				//printf(CYAN "mantissa_size= %d\n", mantissa_size);
+				printf(CYAN "mnt_lower= %lf, mnt_upper = %lf, mnt_middle = %lf \n", mantissa_lower, mantissa_upper, mantissa_middle);
+				printf(CYAN "mnt_extract= %ld\n", mantissa_extract);
+				printf(CYAN "exp_extract= %ld\n", exponent_extract);
+				printf(CYAN "exp_rounded= %ld\n", exponent_rounded);
+				printf(CYAN "mnt_rounded= %lx\n", mantissa_rounded);
+				printf(CYAN "mantissa_size= %d\n", mantissa_size);
 				*myfloat_h = (sign_extract << float_size-1) + ((exponent_rounded & exponent_en) << mantissa_size) + (mantissa_rounded & mantissa_en);
 			}
 		}
+	}
+	if (exponent_rounded == 1) {
+		denormalized = 0;	
+		mantissa_rounded_f = 1;
 	}
 	if (denormalized == 1)
 		mantissa_rounded_f = 0;
@@ -530,7 +597,7 @@ int float_to_hex(number f, int float_size, int exponent_size, int mantissa_size,
 	for (int i=1; i<=mantissa_size; i++) {
 		mantissa_rounded_f += (double)((mantissa_rounded >> (mantissa_size-i)) & lsb_en) * (1 / pow(2, i));
 	}
-	//printf(CYAN "mnt_rounded_f = %lf\n" CRESET, mantissa_rounded_f);
+	printf(CYAN "mnt_rounded_f = %lf\n" CRESET, mantissa_rounded_f);
 	if (sign_extract == 1) {
 		*f_out = -pow(2, (double)exponent_rounded-(bias-denormalized)) * mantissa_rounded_f;
 		if (fabs(*f_out) >= pow(2,(pow(2,(double)exponent_size)-1-bias))) {
