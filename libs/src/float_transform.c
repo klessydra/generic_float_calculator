@@ -131,7 +131,7 @@ int float_to_hex(number f, uint64_t* myfloat_h, double* f_out) {
 						exact = 1;
 					}
 					if (mantissa <= mantissa_upper) {
-						round_fp(mantissa_extract, sign_extract, mantissa, mantissa_middle, mantissa_upper, &mantissa_rounded, &exponent_rounded);
+						round_fp(mantissa_extract, sign_extract, mantissa, mantissa_middle,  mantissa_lower, mantissa_upper, &mantissa_rounded, &exponent_rounded);
 						break;
 					}
 					mantissa_extract += 1;

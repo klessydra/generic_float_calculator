@@ -1,7 +1,7 @@
 
 void parse_args(unsigned int argc, char** argv);
 
-void round_fp(uint64_t mantissa_extract, uint64_t sign_extract, double mantissa, double mantissa_middle, double mantissa_upper, uint64_t* mantissa_rounded, uint64_t* exponent_rounded);
+void round_fp(uint64_t mantissa_extract, uint64_t sign_extract, double mantissa, double mantissa_middle, double mantissa_lower, double mantissa_upper, uint64_t* mantissa_rounded, uint64_t* exponent_rounded);
 int  float_to_hex(number f, uint64_t* myfloat_h, double* f_out);
 void hex_to_float(number f, double* f_out);
 
