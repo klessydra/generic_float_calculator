@@ -37,18 +37,20 @@ typedef union{
 	uint64_t int_i;
 } number;
 
-void round_fp(int round_type, int mantissa_size, uint64_t mantissa_extract, uint64_t sign_extract, double mantissa, double mantissa_middle, double mantissa_upper, uint64_t* mantissa_rounded, uint64_t* exponent_rounded);
-int  float_to_hex(number f, int float_size, int exponent_size, int mantissa_size, int bias, int round_type, uint64_t* myfloat_h, double* f_out);
-void hex_to_float(number f, int float_size, int exponent_size, int mantissa_size, int bias, double* f_out);
+void round_fp(int round_type, uint64_t mantissa_extract, uint64_t sign_extract, double mantissa, double mantissa_middle, double mantissa_upper, uint64_t* mantissa_rounded, uint64_t* exponent_rounded);
+int  float_to_hex(number f, int round_type, uint64_t* myfloat_h, double* f_out);
+void hex_to_float(number f, double* f_out);
+
+int float_size    = 0;
+int mantissa_size = 0;
+int exponent_size = 0;
+int  bias         = 0;
+
+double upper_bound;
 
 int main() {
 
-	int float_size    = 0;
-	int mantissa_size = 0;
-	int exponent_size = 0;
-
 	char custom_bias;
-	int  bias          = 0;
 
 	int op_type;
 	int conv_type;
@@ -276,6 +278,8 @@ int main() {
 
 	uint64_t number_of_floats = (uint64_t) pow(2,float_size);
 
+	upper_bound = pow(2,(pow(2,(double)exponent_size)-1-bias));
+
 	if (op_type == 0) {
 		printf(GREEN "\nFLOAT_%d (1-%d-%d)\n", float_size, exponent_size, mantissa_size);
 		printf(GREEN "\n\tOP_A\tOP_B\tADD\tSUB\tMUL\tDIV\n");
@@ -283,16 +287,16 @@ int main() {
 			for (int j=0; j<number_of_floats; j++){
 				f1.int_i = i;
 				f2.int_i = j;
-				hex_to_float(f1, float_size, exponent_size, mantissa_size, bias, &f1_out);
-				hex_to_float(f2, float_size, exponent_size, mantissa_size, bias, &f2_out);
+				hex_to_float(f1, &f1_out);
+				hex_to_float(f2, &f2_out);
 				fsum.float_i = f1_out + f2_out;
 				fsub.float_i = f1_out - f2_out;
 				fmul.float_i = f1_out * f2_out;
 				fdiv.float_i = f1_out / f2_out;
-				float_to_hex(fsum, float_size, exponent_size, mantissa_size, bias, round_type, &mysum_h, &fsum_out);
-				float_to_hex(fsub, float_size, exponent_size, mantissa_size, bias, round_type, &mysub_h, &fsub_out);
-				float_to_hex(fmul, float_size, exponent_size, mantissa_size, bias, round_type, &mymul_h, &fmul_out);
-				float_to_hex(fdiv, float_size, exponent_size, mantissa_size, bias, round_type, &mydiv_h, &fdiv_out);
+				float_to_hex(fsum, round_type, &mysum_h, &fsum_out);
+				float_to_hex(fsub, round_type, &mysub_h, &fsub_out);
+				float_to_hex(fmul, round_type, &mymul_h, &fmul_out);
+				float_to_hex(fdiv, round_type, &mydiv_h, &fdiv_out);
 				if (float_size <= 4)
 					printf(CYAN "\t0x%.01lx\t0x%.01lx\t0x%.01lx\t0x%.01lx\t0x%.01lx\t0x%.01lx\n" CRESET, f1.int_i, f2.int_i, mysum_h, mysub_h, mymul_h, mydiv_h);
 				else if (float_size <= 8)
@@ -314,7 +318,7 @@ int main() {
 		printf(GREEN "\nFLOAT_%d (1-%d-%d)\n", float_size, exponent_size, mantissa_size);
 		for (int i=0; i<number_of_floats; i++){
 			f1.int_i = i;
-			hex_to_float(f1, float_size, exponent_size, mantissa_size, bias, &f1_out);
+			hex_to_float(f1,  &f1_out);
 			printf(CYAN "\t0x%lx (%E)\n" CRESET, f1.int_i, f1_out);
 		}
 	}
@@ -325,11 +329,16 @@ int main() {
 		scanf("%lx", &f1.int_i);
 		printf(GREEN "Insert float 2 in hex: " CRESET);
 		scanf("%lx", &f2.int_i);
-		hex_to_float(f1, float_size, exponent_size, mantissa_size, bias, &f1_out);
-		hex_to_float(f2, float_size, exponent_size, mantissa_size, bias, &f2_out);
+		hex_to_float(f1, &f1_out);
+		hex_to_float(f2, &f2_out);
 		fsum.float_i = f1_out + f2_out;
+<<<<<<< HEAD
 		exact = float_to_hex(fsum, float_size, exponent_size, mantissa_size, bias, round_type, &myfloat_h, &fsum_out);
 		//printf(CYAN "\n\tf1_out + f2_out = fsum.float_i\n" CRESET);
+=======
+		exact = float_to_hex(fsum, round_type, &myfloat_h, &fsum_out);
+		printf(CYAN "\n\tf1_out + f2_out = fsum.float_i\n" CRESET);
+>>>>>>> 0454d13 (replacing arguments with Global variables)
 		if (exact == 1) {
 			printf(CYAN "\n\t%lf + %lf = %lf\n" CRESET, f1_out, f2_out, fsum.float_i);
 		}
@@ -345,11 +354,16 @@ int main() {
 		scanf("%lx", &f1.int_i);
 		printf(GREEN "Insert float 2 in hex: " CRESET);
 		scanf("%lx", &f2.int_i);
-		hex_to_float(f1, float_size, exponent_size, mantissa_size, bias, &f1_out);
-		hex_to_float(f2, float_size, exponent_size, mantissa_size, bias, &f2_out);
+		hex_to_float(f1, &f1_out);
+		hex_to_float(f2, &f2_out);
 		fsub.float_i = f1_out - f2_out;
+<<<<<<< HEAD
 		exact = float_to_hex(fsub, float_size, exponent_size, mantissa_size, bias, round_type, &myfloat_h, &fsub_out);
 		//printf(CYAN "\n\tf1_out - f2_out = fsub.float_i\n" CRESET);
+=======
+		exact = float_to_hex(fsub, round_type, &myfloat_h, &fsub_out);
+		printf(CYAN "\n\tf1_out - f2_out = fsub.float_i\n" CRESET);
+>>>>>>> 0454d13 (replacing arguments with Global variables)
 		if (exact == 1) {
 			printf(CYAN "\n\t%lf - %lf = %lf\n" CRESET, f1_out, f2_out, fsub.float_i);
 		}
@@ -365,11 +379,16 @@ int main() {
 		scanf("%lx", &f1.int_i);
 		printf(GREEN "Insert float 2 in hex: " CRESET);
 		scanf("%lx", &f2.int_i);
-		hex_to_float(f1, float_size, exponent_size, mantissa_size, bias, &f1_out);
-		hex_to_float(f2, float_size, exponent_size, mantissa_size, bias, &f2_out);
+		hex_to_float(f1, &f1_out);
+		hex_to_float(f2, &f2_out);
 		fmul.float_i = f1_out * f2_out;
+<<<<<<< HEAD
 		exact = float_to_hex(fmul, float_size, exponent_size, mantissa_size, bias, round_type, &myfloat_h, &fmul_out);
 		//printf(CYAN "\n\tf1_out * f2_out = fmul.float_i\n" CRESET);
+=======
+		exact = float_to_hex(fmul, round_type, &myfloat_h, &fmul_out);
+		printf(CYAN "\n\tf1_out * f2_out = fmul.float_i\n" CRESET);
+>>>>>>> 0454d13 (replacing arguments with Global variables)
 		if (exact == 1) {
 			printf(CYAN "\n\t%lf * %lf = %lf\n" CRESET, f1_out, f2_out, fmul.float_i);
 		}
@@ -386,11 +405,16 @@ int main() {
 		scanf("%lx", &f1.int_i);
 		printf(GREEN "Insert float 2 in hex: " CRESET);
 		scanf("%lx", &f2.int_i);
-		hex_to_float(f1, float_size, exponent_size, mantissa_size, bias, &f1_out);
-		hex_to_float(f2, float_size, exponent_size, mantissa_size, bias, &f2_out);
+		hex_to_float(f1, &f1_out);
+		hex_to_float(f2, &f2_out);
 		fdiv.float_i = f1_out / f2_out;
+<<<<<<< HEAD
 		exact = float_to_hex(fdiv, float_size, exponent_size, mantissa_size, bias, round_type, &myfloat_h, &fdiv_out);
 		//printf(CYAN "\n\tf1_out / f2_out = fdiv.float_i\n" CRESET);
+=======
+		exact = float_to_hex(fdiv, round_type, &myfloat_h, &fdiv_out);
+		printf(CYAN "\n\tf1_out / f2_out = fdiv.float_i\n" CRESET);
+>>>>>>> 0454d13 (replacing arguments with Global variables)
 		if (exact == 1) {
 			printf(CYAN "\n\t%lf / %lf = %lf\n" CRESET, f1_out, f2_out, fdiv.float_i);
 		}
@@ -404,11 +428,17 @@ int main() {
 		printf(GREEN "\nSQUARE ROOT\n");
 		printf(GREEN "\nInsert your float in hex: " CRESET);
 		scanf("%lx", &f1.int_i);
-		hex_to_float(f1, float_size, exponent_size, mantissa_size, bias, &f1_out);
+		hex_to_float(f1, &f1_out);
 		fsqrt.float_i = sqrt(f1_out);
+<<<<<<< HEAD
 		exact = float_to_hex(fsqrt, float_size, exponent_size, mantissa_size, bias, round_type, &myfloat_h, &fsqrt_out);
 		//printf(CYAN "\n\tfsqrt(float_i)\n" CRESET);
 		printf(CYAN "\n\tfsqrt(%lf) = %lf\n" CRESET, f1_out, fsqrt.float_i);
+=======
+		exact = float_to_hex(fsqrt, round_type, &myfloat_h, &fsqrt_out);
+		printf(CYAN "\n\tfsqrt(float_i)\n" CRESET);
+		printf(CYAN "\tfsqrt(%lf) = %lf\n" CRESET, f1_out, fsqrt.float_i);
+>>>>>>> 0454d13 (replacing arguments with Global variables)
 		printf(CYAN "\tfsqrt(0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, myfloat_h);
 	}
 
@@ -420,20 +450,26 @@ int main() {
 		scanf("%lx", &f2.int_i);
 		printf(GREEN "Insert float 3 in hex: " CRESET);
 		scanf("%lx", &f3.int_i);
-		hex_to_float(f1, float_size, exponent_size, mantissa_size, bias, &f1_out);
-		hex_to_float(f2, float_size, exponent_size, mantissa_size, bias, &f2_out);
-		hex_to_float(f3, float_size, exponent_size, mantissa_size, bias, &f3_out);
+		hex_to_float(f1, &f1_out);
+		hex_to_float(f2, &f2_out);
+		hex_to_float(f3, &f3_out);
 		fma.float_i = (f1_out * f2_out) + f3_out;
+<<<<<<< HEAD
 		exact = float_to_hex(fma, float_size, exponent_size, mantissa_size, bias, round_type, &myfloat_h, &fma_out);
 		//printf(CYAN "\n\t(f1_out * f2_out) + f3_out = fma.float_i\n" CRESET);
 		printf(CYAN "\n\t(%lf * %lf) + %lf = %lf\n" CRESET, f1_out, f2_out, f3_out, fma.float_i);
+=======
+		exact = float_to_hex(fma, round_type, &myfloat_h, &fma_out);
+		printf(CYAN "\n\t(f1_out * f2_out) + f3_out = fma.float_i\n" CRESET);
+		printf(CYAN "\t(%lf * %lf) + %lf = %lf\n" CRESET, f1_out, f2_out, f3_out, fma.float_i);
+>>>>>>> 0454d13 (replacing arguments with Global variables)
 		printf(CYAN "\t((0x%lx) * (0x%lx)) + (0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, f2.int_i, f3.int_i, myfloat_h);
 	}
 
 	if (op_type == 9) {
 		printf("\nINSERT YOUR FLOAT: ");
 		scanf("%lf", &f1.float_i); 
-		exact = float_to_hex(f1, float_size, exponent_size, mantissa_size, bias, round_type, &myfloat_h, &f1_out);
+		exact = float_to_hex(f1, round_type, &myfloat_h, &f1_out);
 		printf(CYAN "HEX = 0x%lx (%lf)\n" CRESET, myfloat_h, f1_out);
 	}
 
@@ -441,14 +477,14 @@ int main() {
 		printf("\nINSERT YOUR HEX: ");
 		scanf("%lx", &f1.int_i); 
 		uint64_t myfloat_h = 0x0;
-		hex_to_float(f1, float_size, exponent_size, mantissa_size, bias, &f1_out);
+		hex_to_float(f1, &f1_out);
 		printf(CYAN "FLOAT = %lf (0x%lx)\n" CRESET, f1_out, f1.int_i);
 	}
 	return 0;
 };
 
 
-void hex_to_float(number f, int float_size, int exponent_size, int mantissa_size, int bias, double* f_out) {
+void hex_to_float(number f, double* f_out) {
 	const uint64_t lsb_en = 1;
 	int64_t sign_extract     = 0;
 	int64_t exponent_extract = 0;
@@ -507,7 +543,7 @@ void hex_to_float(number f, int float_size, int exponent_size, int mantissa_size
 	}
 }
 
-int float_to_hex(number f, int float_size, int exponent_size, int mantissa_size, int bias, int round_type, uint64_t* myfloat_h, double* f_out) {
+int float_to_hex(number f, int round_type, uint64_t* myfloat_h, double* f_out) {
 	const uint64_t lsb_en = 1;
 	uint64_t mantissa_en = pow(2,mantissa_size)-1; 
 	uint64_t exponent_en = pow(2,exponent_size)-1; 
@@ -525,35 +561,40 @@ int float_to_hex(number f, int float_size, int exponent_size, int mantissa_size,
 	double mantissa_middle;
 	double mantissa;
 	int exact = 0;
+	double absolute_float = fabs(f.float_i);
 	if (isnan(f.float_i)) {
 		// Generate a qnan (Quiet NaN)
 		mantissa_rounded = pow(2,mantissa_size-1);
 		exponent_rounded = pow(2,exponent_size)-1; 
 		*myfloat_h = (sign_extract << float_size-1) + (exponent_rounded << mantissa_size) + mantissa_rounded;
 	}
-	else if (fabs(f.float_i) >= pow(2,(pow(2,(double)exponent_size)-1-bias))) {
+	else if (absolute_float >= upper_bound) {
 		mantissa_rounded = 0;
 		exponent_rounded = pow(2,exponent_size)-1; 
 		*myfloat_h = (sign_extract << float_size-1) + (exponent_rounded << mantissa_size) + mantissa_rounded;
 		//printf(CYAN "HERE\n");
 	}
-	else if (fabs(f.float_i) == 0) { // if input float is 0 
+	else if (absolute_float == 0) { // if input float is 0 
 		*myfloat_h = sign_extract << float_size-1;
 		//printf(CYAN "HERE2\n");
 	}
 	else {
 		for (int i=-(bias+mantissa_size-1); i<=bias; i++) {
+<<<<<<< HEAD
 			if (fabs(f.float_i) >= pow(2,i) && fabs(f.float_i) < pow(2,i+1)) {
+=======
+			if (absolute_float >= pow(2,i) && absolute_float < pow(2,i+1)) {
+>>>>>>> 0454d13 (replacing arguments with Global variables)
 				//printf(CYAN "EXPONENT: %d\n", i);
 				if (i < -(bias-1)) {  // denormalized exponent
 					exponent_extract = 0;
-					mantissa = fabs(f.float_i) * pow(2,bias-1);
+					mantissa = absolute_float * pow(2,bias-1);
 					denormalized = 1;
 					normalized   = 0;
 				}
 				else {
 					exponent_extract = i + bias;
-					mantissa = fabs(f.float_i) / pow(2,i);
+					mantissa = absolute_float / pow(2,i);
 					denormalized = 0;
 					normalized   = 1;
 				}
@@ -571,7 +612,7 @@ int float_to_hex(number f, int float_size, int exponent_size, int mantissa_size,
 						exact = 1;
 					}
 					if (mantissa <= mantissa_upper) {
-						round_fp(round_type, mantissa_size, mantissa_extract, sign_extract, mantissa, mantissa_middle, mantissa_upper, &mantissa_rounded, &exponent_rounded);
+						round_fp(round_type, mantissa_extract, sign_extract, mantissa, mantissa_middle, mantissa_upper, &mantissa_rounded, &exponent_rounded);
 						break;
 					}
 					mantissa_extract += 1;
@@ -600,20 +641,20 @@ int float_to_hex(number f, int float_size, int exponent_size, int mantissa_size,
 	//printf(CYAN "mnt_rounded_f = %lf\n" CRESET, mantissa_rounded_f);
 	if (sign_extract == 1) {
 		*f_out = -pow(2, (double)exponent_rounded-(bias-denormalized)) * mantissa_rounded_f;
-		if (fabs(*f_out) >= pow(2,(pow(2,(double)exponent_size)-1-bias))) {
+		if (fabs(*f_out) >= upper_bound) {
 			*f_out = -INFINITY;
 		}
 	}
 	else {
 		*f_out =  pow(2, (double)exponent_rounded-(bias-denormalized)) * mantissa_rounded_f;
-		if (fabs(*f_out) >= pow(2,(pow(2,(double)exponent_size)-1-bias))) {
+		if (fabs(*f_out) >= upper_bound) {
 			*f_out = INFINITY;
 		}
 	}
 	return exact;
 }
 
-void round_fp(int round_type, int mantissa_size, uint64_t mantissa_extract, uint64_t sign_extract, double mantissa, double mantissa_middle, double mantissa_upper, uint64_t* mantissa_rounded, uint64_t* exponent_rounded) {
+void round_fp(int round_type, uint64_t mantissa_extract, uint64_t sign_extract, double mantissa, double mantissa_middle, double mantissa_upper, uint64_t* mantissa_rounded, uint64_t* exponent_rounded) {
 	const uint64_t lsb_en = 1;
 	uint64_t nearest_even_shift;
 	if ((mantissa_extract + 1) & lsb_en == 1) {  
