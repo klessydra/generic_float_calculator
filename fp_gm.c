@@ -83,7 +83,7 @@ int main() {
 	printf(PURPLE "Enter Float Size: " CRESET);
 	scanf("%d", &float_size);
 
-	if (float_size < 4) {
+	if (float_size < 4) { // 3-bit custom floats and smaller arent allowed
 		if (err_cnt.error_cnt_float_size == 10) {
 			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
 			exit(-1);
@@ -297,17 +297,11 @@ int main() {
 				float_to_hex(fsub, round_type, &mysub_h, &fsub_out);
 				float_to_hex(fmul, round_type, &mymul_h, &fmul_out);
 				float_to_hex(fdiv, round_type, &mydiv_h, &fdiv_out);
-				if (float_size <= 4)
-					printf(CYAN "\t0x%.01lx\t0x%.01lx\t0x%.01lx\t0x%.01lx\t0x%.01lx\t0x%.01lx\n" CRESET, f1.int_i, f2.int_i, mysum_h, mysub_h, mymul_h, mydiv_h);
-				else if (float_size <= 8)
-					printf(CYAN "\t0x%.02lx\t0x%.02lx\t0x%.02lx\t0x%.02lx\t0x%.02lx\t0x%.02lx\n" CRESET, f1.int_i, f2.int_i, mysum_h, mysub_h, mymul_h, mydiv_h);
-				else if (float_size <= 16)
-					printf(CYAN "\t0x%.04lx\t0x%.04lx\t0x%.04lx\t0x%.04lx\t0x%.04lx\t0x%.04lx\n" CRESET, f1.int_i, f2.int_i, mysum_h, mysub_h, mymul_h, mydiv_h);
-				else if (float_size <= 32)
-					printf(CYAN "\t0x%.08lx\t0x%.08lx\t0x%.08lx\t0x%.08lx\t0x%.08lx\t0x%.08lx\n" CRESET, f1.int_i, f2.int_i, mysum_h, mysub_h, mymul_h, mydiv_h);
-				else if (float_size <= 64)
-					printf(CYAN "\t0x%.16lx\t0x%.16lx\t0x%.16lx\t0x%.16lx\t0x%.16lx\t0x%.16lx\n" CRESET, f1.int_i, f2.int_i, mysum_h, mysub_h, mymul_h, mydiv_h);
-
+				printf(CYAN "\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\n" CRESET, 
+						float_size/4, f1.int_i, float_size/4, f2.int_i,
+						float_size/4, mysum_h, float_size/4, mysub_h, 
+						float_size/4, mymul_h, float_size/4,mydiv_h
+						);
 				//printf(CYAN "\t%lx (%lf)\t%lx (%lf)\t%lx (%lf)\t%lx (%lf)\t%lx (%lf)\t%lx (%lf)\n" CRESET, 
 				//		f1.int_i, f1_out, f2.int_i, f2_out, mysum_h, fsum_out, mysub_h, fsub_out, mymul_h, fmul_out, mydiv_h, fdiv_out);
 			}
