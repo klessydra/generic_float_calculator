@@ -231,7 +231,7 @@ int main(unsigned int argc, char** argv) {
 		exact = float_to_hex(fsum, &myfloat_h, &fsum_out);
 		printf(CYAN "\n\tf1_out + f2_out = fsum.float_i\n" CRESET);
 		if (exact == 1) {
-			printf(CYAN "\n\t%lf + %lf = %lf\n" CRESET, f1_out, f2_out, fsum.float_i);
+			printf(CYAN "\t%lf + %lf = %lf\n" CRESET, f1_out, f2_out, fsum.float_i);
 		}
 		else {
 			printf(CYAN "\t%lf + %lf = %lf (" YELLOW "ROUNDED: " CYAN "%lf)\n" CRESET, f1_out, f2_out, fsum.float_i, fsum_out);
@@ -251,7 +251,7 @@ int main(unsigned int argc, char** argv) {
 		exact = float_to_hex(fsub, &myfloat_h, &fsub_out);
 		printf(CYAN "\n\tf1_out - f2_out = fsub.float_i\n" CRESET);
 		if (exact == 1) {
-			printf(CYAN "\n\t%lf - %lf = %lf\n" CRESET, f1_out, f2_out, fsub.float_i);
+			printf(CYAN "\t%lf - %lf = %lf\n" CRESET, f1_out, f2_out, fsub.float_i);
 		}
 		else {
 			printf(CYAN "\t%lf - %lf = %lf (" YELLOW "ROUNDED: " CYAN "%lf)\n" CRESET, f1_out, f2_out, fsub.float_i, fsub_out);
@@ -271,7 +271,7 @@ int main(unsigned int argc, char** argv) {
 		exact = float_to_hex(fmul, &myfloat_h, &fmul_out);
 		printf(CYAN "\n\tf1_out * f2_out = fmul.float_i\n" CRESET);
 		if (exact == 1) {
-			printf(CYAN "\n\t%lf * %lf = %lf\n" CRESET, f1_out, f2_out, fmul.float_i);
+			printf(CYAN "\t%lf * %lf = %lf\n" CRESET, f1_out, f2_out, fmul.float_i);
 		}
 		else {
 			printf(CYAN "\t%lf * %lf = %lf (" YELLOW "ROUNDED: " CYAN "%lf)\n" CRESET, f1_out, f2_out, fmul.float_i, fmul_out);
@@ -292,7 +292,7 @@ int main(unsigned int argc, char** argv) {
 		exact = float_to_hex(fdiv, &myfloat_h, &fdiv_out);
 		printf(CYAN "\n\tf1_out / f2_out = fdiv.float_i\n" CRESET);
 		if (exact == 1) {
-			printf(CYAN "\n\t%lf / %lf = %lf\n" CRESET, f1_out, f2_out, fdiv.float_i);
+			printf(CYAN "\t%lf / %lf = %lf\n" CRESET, f1_out, f2_out, fdiv.float_i);
 		}
 		else {
 			printf(CYAN "\t%lf / %lf = %lf (" YELLOW "ROUNDED: " CYAN "%lf)\n" CRESET, f1_out, f2_out, fdiv.float_i, fdiv_out);
