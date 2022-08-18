@@ -332,13 +332,8 @@ int main() {
 		hex_to_float(f1, &f1_out);
 		hex_to_float(f2, &f2_out);
 		fsum.float_i = f1_out + f2_out;
-<<<<<<< HEAD
-		exact = float_to_hex(fsum, float_size, exponent_size, mantissa_size, bias, round_type, &myfloat_h, &fsum_out);
-		//printf(CYAN "\n\tf1_out + f2_out = fsum.float_i\n" CRESET);
-=======
 		exact = float_to_hex(fsum, round_type, &myfloat_h, &fsum_out);
 		printf(CYAN "\n\tf1_out + f2_out = fsum.float_i\n" CRESET);
->>>>>>> 0454d13 (replacing arguments with Global variables)
 		if (exact == 1) {
 			printf(CYAN "\n\t%lf + %lf = %lf\n" CRESET, f1_out, f2_out, fsum.float_i);
 		}
@@ -357,13 +352,8 @@ int main() {
 		hex_to_float(f1, &f1_out);
 		hex_to_float(f2, &f2_out);
 		fsub.float_i = f1_out - f2_out;
-<<<<<<< HEAD
-		exact = float_to_hex(fsub, float_size, exponent_size, mantissa_size, bias, round_type, &myfloat_h, &fsub_out);
-		//printf(CYAN "\n\tf1_out - f2_out = fsub.float_i\n" CRESET);
-=======
 		exact = float_to_hex(fsub, round_type, &myfloat_h, &fsub_out);
 		printf(CYAN "\n\tf1_out - f2_out = fsub.float_i\n" CRESET);
->>>>>>> 0454d13 (replacing arguments with Global variables)
 		if (exact == 1) {
 			printf(CYAN "\n\t%lf - %lf = %lf\n" CRESET, f1_out, f2_out, fsub.float_i);
 		}
@@ -382,13 +372,8 @@ int main() {
 		hex_to_float(f1, &f1_out);
 		hex_to_float(f2, &f2_out);
 		fmul.float_i = f1_out * f2_out;
-<<<<<<< HEAD
-		exact = float_to_hex(fmul, float_size, exponent_size, mantissa_size, bias, round_type, &myfloat_h, &fmul_out);
-		//printf(CYAN "\n\tf1_out * f2_out = fmul.float_i\n" CRESET);
-=======
 		exact = float_to_hex(fmul, round_type, &myfloat_h, &fmul_out);
 		printf(CYAN "\n\tf1_out * f2_out = fmul.float_i\n" CRESET);
->>>>>>> 0454d13 (replacing arguments with Global variables)
 		if (exact == 1) {
 			printf(CYAN "\n\t%lf * %lf = %lf\n" CRESET, f1_out, f2_out, fmul.float_i);
 		}
@@ -408,13 +393,8 @@ int main() {
 		hex_to_float(f1, &f1_out);
 		hex_to_float(f2, &f2_out);
 		fdiv.float_i = f1_out / f2_out;
-<<<<<<< HEAD
-		exact = float_to_hex(fdiv, float_size, exponent_size, mantissa_size, bias, round_type, &myfloat_h, &fdiv_out);
-		//printf(CYAN "\n\tf1_out / f2_out = fdiv.float_i\n" CRESET);
-=======
 		exact = float_to_hex(fdiv, round_type, &myfloat_h, &fdiv_out);
 		printf(CYAN "\n\tf1_out / f2_out = fdiv.float_i\n" CRESET);
->>>>>>> 0454d13 (replacing arguments with Global variables)
 		if (exact == 1) {
 			printf(CYAN "\n\t%lf / %lf = %lf\n" CRESET, f1_out, f2_out, fdiv.float_i);
 		}
@@ -430,15 +410,9 @@ int main() {
 		scanf("%lx", &f1.int_i);
 		hex_to_float(f1, &f1_out);
 		fsqrt.float_i = sqrt(f1_out);
-<<<<<<< HEAD
-		exact = float_to_hex(fsqrt, float_size, exponent_size, mantissa_size, bias, round_type, &myfloat_h, &fsqrt_out);
-		//printf(CYAN "\n\tfsqrt(float_i)\n" CRESET);
-		printf(CYAN "\n\tfsqrt(%lf) = %lf\n" CRESET, f1_out, fsqrt.float_i);
-=======
 		exact = float_to_hex(fsqrt, round_type, &myfloat_h, &fsqrt_out);
 		printf(CYAN "\n\tfsqrt(float_i)\n" CRESET);
 		printf(CYAN "\tfsqrt(%lf) = %lf\n" CRESET, f1_out, fsqrt.float_i);
->>>>>>> 0454d13 (replacing arguments with Global variables)
 		printf(CYAN "\tfsqrt(0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, myfloat_h);
 	}
 
@@ -454,15 +428,9 @@ int main() {
 		hex_to_float(f2, &f2_out);
 		hex_to_float(f3, &f3_out);
 		fma.float_i = (f1_out * f2_out) + f3_out;
-<<<<<<< HEAD
-		exact = float_to_hex(fma, float_size, exponent_size, mantissa_size, bias, round_type, &myfloat_h, &fma_out);
-		//printf(CYAN "\n\t(f1_out * f2_out) + f3_out = fma.float_i\n" CRESET);
-		printf(CYAN "\n\t(%lf * %lf) + %lf = %lf\n" CRESET, f1_out, f2_out, f3_out, fma.float_i);
-=======
 		exact = float_to_hex(fma, round_type, &myfloat_h, &fma_out);
 		printf(CYAN "\n\t(f1_out * f2_out) + f3_out = fma.float_i\n" CRESET);
 		printf(CYAN "\t(%lf * %lf) + %lf = %lf\n" CRESET, f1_out, f2_out, f3_out, fma.float_i);
->>>>>>> 0454d13 (replacing arguments with Global variables)
 		printf(CYAN "\t((0x%lx) * (0x%lx)) + (0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, f2.int_i, f3.int_i, myfloat_h);
 	}
 
@@ -580,11 +548,7 @@ int float_to_hex(number f, int round_type, uint64_t* myfloat_h, double* f_out) {
 	}
 	else {
 		for (int i=-(bias+mantissa_size-1); i<=bias; i++) {
-<<<<<<< HEAD
-			if (fabs(f.float_i) >= pow(2,i) && fabs(f.float_i) < pow(2,i+1)) {
-=======
 			if (absolute_float >= pow(2,i) && absolute_float < pow(2,i+1)) {
->>>>>>> 0454d13 (replacing arguments with Global variables)
 				//printf(CYAN "EXPONENT: %d\n", i);
 				if (i < -(bias-1)) {  // denormalized exponent
 					exponent_extract = 0;
