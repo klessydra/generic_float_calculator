@@ -1,0 +1,153 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+
+#include "types.h"
+#include "vars.h"
+#include "defs.h"
+
+int check_input_float() {
+	static unsigned int error_cnt_float_size = 0;
+	if (float_size < 4) { // 3-bit custom floats and smaller aren't allowed
+		if (error_cnt_float_size == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (error_cnt_float_size > 0) {
+			printf(RED "ERROR: " WHITE "Invalid float size (PLEASE ENTER A FLOAT SIZE > 3)\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Invalid float size\n" CRESET);
+		}
+		error_cnt_float_size++;
+		printf("\n");
+		return FP_ERROR;
+	}
+	return FP_SUCCESS;
+}
+
+int check_input_exponent() {
+	static unsigned int error_cnt_exponent_size = 0;
+	if (exponent_size < 2 || exponent_size > float_size-2) {
+		if (error_cnt_exponent_size == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (error_cnt_exponent_size > 0) {
+			printf(RED "ERROR: " WHITE "Invalid exponent size (PLEASE ENTER AN EXPONENT SIZE > 1 && < FLOAT_SIZE -1)\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Invalid exponent size\n" CRESET);
+		}
+		error_cnt_exponent_size++;
+		printf("\n");
+		return FP_ERROR;
+	}
+	return FP_SUCCESS;
+}
+
+int check_input_mantissa() {
+	static unsigned int error_cnt_mantissa_size = 0;
+	if (mantissa_size <= 0 || exponent_size + mantissa_size != float_size-1) {
+		if (error_cnt_mantissa_size == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (error_cnt_mantissa_size > 0) {
+			printf(RED "ERROR: " WHITE "Invalid mantissa size (PLEASE ENTER A MANTISSA SIZE > 0 && < (FLOAT_SIZE - EXPONENT_SIZE -1))\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Invalid mantissa size\n" CRESET);
+		}
+		error_cnt_mantissa_size++;
+		printf("\n");
+		return FP_ERROR;
+	}
+	return FP_SUCCESS;
+}
+
+int check_input_bias() {
+	static unsigned int error_cnt_bias_size = 0;
+	if (custom_bias == 'y' || custom_bias == 'Y') {
+    	printf("Enter bias: ");
+    	scanf("%d", &bias);
+    }
+    else if (custom_bias == 'n' || custom_bias == 'N') {
+    	printf(BLUE "Defaulting bias to 2^(%d)-1 = " CRESET "%d\n", exponent_size-1, (int)pow(2,exponent_size-1)-1);
+    	bias = (int)pow(2,exponent_size-1)-1;
+	}
+	else {
+		bias = '0';
+		if (error_cnt_bias_size == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}
+		if (error_cnt_bias_size > 0) {
+			printf(RED "ERROR: " WHITE "Unknown answer (PLEASE RESPOND \'Y\' OR \'y\' FOR YES, AND \'N\' OR \'n\' FOR NO)\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Unknown answer\n" CRESET);
+		}
+		error_cnt_bias_size++;
+		return FP_ERROR;
+	}
+	return FP_SUCCESS;
+}
+
+
+int check_input_op_type() {
+	static unsigned int error_cnt_op_type = 0;
+	if (op_type < 0 || op_type > 10) {
+		if (error_cnt_op_type == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (error_cnt_op_type > 0) {
+			printf(RED "ERROR: " WHITE "Invalid op type (PLEASE ENTER A VALID OP TYPE NUMBER [0-10]\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Invalid op type\n" CRESET);
+		}
+		error_cnt_op_type++;
+		return FP_ERROR;
+	}
+	return FP_SUCCESS;
+}
+
+int check_input_conv_type() {
+	static unsigned int error_cnt_conv_type = 0;
+	if (conv_type < 1 || conv_type > 7) {
+		if (error_cnt_conv_type == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (error_cnt_conv_type > 0) {
+			printf(RED "ERROR: " WHITE "Invalid conversion type (PLEASE ENTER A VALID CONV TYPE NUMBER [1-7]\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Invalid conversion type\n" CRESET);
+		}
+		error_cnt_conv_type++;
+		return FP_ERROR;
+	}
+	return FP_SUCCESS;
+}
+
+int check_input_rounding_mode() {
+	static unsigned int error_cnt_round_mode = 0;
+	if (round_mode < 1 || round_mode > 5) {
+		if (error_cnt_round_mode == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (error_cnt_round_mode > 0) {
+			printf(RED "ERROR: " WHITE "Invalid rounding mode (PLEASE ENTER A VALID ROUND MODE NUMBER [1-5]\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Invalid rounding mode\n" CRESET);
+		}
+		error_cnt_round_mode++;
+		return FP_ERROR;
+	}
+	return FP_SUCCESS;
+}
