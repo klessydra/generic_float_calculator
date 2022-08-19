@@ -114,6 +114,26 @@ int check_input_op_type() {
 	return FP_SUCCESS;
 }
 
+int check_input_choice_type() {
+	static unsigned int error_cnt_choice_type = 0;
+	if (choice_type < 1 || choice_type > 2) {
+		if (error_cnt_choice_type == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (error_cnt_choice_type > 0) {
+			printf(RED "ERROR: " WHITE "Invalid choice (PLEASE ENTER A VALID CHOICE NUMBER [1-2]\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Invalid choice\n" CRESET);
+		}
+		error_cnt_choice_type++;
+		return FP_ERROR;
+	}
+	return FP_SUCCESS;
+}
+
+
 int check_input_conv_type() {
 	static unsigned int error_cnt_conv_type = 0;
 	if (conv_type < 1 || conv_type > 7) {

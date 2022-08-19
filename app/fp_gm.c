@@ -17,6 +17,8 @@ int bias          = 0;
 char custom_bias;
 
 int op_type;
+int choice_type;
+int end;
 int conv_type;
 int round_mode;
 int integer_width;
@@ -221,113 +223,297 @@ int main(unsigned int argc, char** argv) {
 
 	if (op_type == 2) {
 		printf(GREEN "\nADDITION\n");
-		printf(GREEN "\nInsert float 1 in hex: " CRESET);
-		scanf("%lx", &f1.int_i);
-		printf(GREEN "Insert float 2 in hex: " CRESET);
-		scanf("%lx", &f2.int_i);
-		hex_to_float(f1, &f1_out);
-		hex_to_float(f2, &f2_out);
-		fsum.float_i = f1_out + f2_out;
-		exact = float_to_hex(fsum, &myfloat_h, &fsum_out);
-		printf(CYAN "\n\tf1_out + f2_out = fsum.float_i\n" CRESET);
-		if (exact == 1) {
-			printf(CYAN "\t%lf + %lf = %lf\n" CRESET, f1_out, f2_out, fsum.float_i);
+	ADDITION_OPTION:
+		printf(      "\nCHOOSE OPTION:\n"
+					 "	(1)  SINGLE ADDITION\n"
+					 "	(2)  ALL POSSIBLE ADDITIONS\n"
+					 "\nOPTION: "
+					);
+		scanf("%d", &choice_type);
+
+		int valid_choice_type = check_input_choice_type();
+		if (valid_choice_type == FP_ERROR) {
+			goto ADDITION_OPTION;		
 		}
-		else {
-			printf(CYAN "\t%lf + %lf = %lf (" YELLOW "ROUNDED: " CYAN "%lf)\n" CRESET, f1_out, f2_out, fsum.float_i, fsum_out);
+
+		if (choice_type == 1) {
+			printf(GREEN "\nInsert float 1 in hex: " CRESET);
+			scanf("%lx", &f1.int_i);
+			printf(GREEN "Insert float 2 in hex: " CRESET);
+			scanf("%lx", &f2.int_i);
+			hex_to_float(f1, &f1_out);
+			hex_to_float(f2, &f2_out);
+			fsum.float_i = f1_out + f2_out;
+			exact = float_to_hex(fsum, &myfloat_h, &fsum_out);
+			printf(CYAN "\n\tf1_out + f2_out = fsum.float_i\n" CRESET);
+			if (exact == 1) {
+				printf(CYAN "\t%lf + %lf = %lf\n" CRESET, f1_out, f2_out, fsum.float_i);
+			}
+			else {
+				printf(CYAN "\t%lf + %lf = %lf (" YELLOW "ROUNDED: " CYAN "%lf)\n" CRESET, f1_out, f2_out, fsum.float_i, fsum_out);
+			}
+			printf(CYAN "\t(0x%lx) + (0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, f2.int_i, myfloat_h);
+		/************************************************************************************************************************/
+		}	else if (choice_type == 2) {
+			for (int i=0; i<number_of_floats; i++){
+				for (int j=0; j<number_of_floats; j++){
+					f1.int_i = i;
+					f2.int_i = j;
+					hex_to_float(f1, &f1_out);
+					hex_to_float(f2, &f2_out);
+					fsum.float_i = f1_out + f2_out;
+					float_to_hex(fsum, &mysum_h, &fsum_out);
+					printf(CYAN "\t0x%.*lx\t0x%.*lx\t0x%.*lx\n" CRESET, 
+							float_size/4, f1.int_i, float_size/4, f2.int_i,
+							float_size/4, mysum_h
+					  	  );
+				}
+			}
 		}
-		printf(CYAN "\t(0x%lx) + (0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, f2.int_i, myfloat_h);
 	}
 
 	if (op_type == 3) {
 		printf(GREEN "\nSUBTRACTION\n");
-		printf(GREEN "\nInsert float 1 in hex: " CRESET);
-		scanf("%lx", &f1.int_i);
-		printf(GREEN "Insert float 2 in hex: " CRESET);
-		scanf("%lx", &f2.int_i);
-		hex_to_float(f1, &f1_out);
-		hex_to_float(f2, &f2_out);
-		fsub.float_i = f1_out - f2_out;
-		exact = float_to_hex(fsub, &myfloat_h, &fsub_out);
-		printf(CYAN "\n\tf1_out - f2_out = fsub.float_i\n" CRESET);
-		if (exact == 1) {
-			printf(CYAN "\t%lf - %lf = %lf\n" CRESET, f1_out, f2_out, fsub.float_i);
+	SUBTRACTION_OPTION:
+		printf(      "\nCHOOSE OPTION:\n"
+					 "	(1)  SINGLE SUBTRACTION\n"
+					 "	(2)  ALL POSSIBLE SUBTRACTIONS\n"
+					 "\nOPTION: "
+					);
+		scanf("%d", &choice_type);
+
+		int valid_choice_type = check_input_choice_type();
+		if (valid_choice_type == FP_ERROR) {
+			goto SUBTRACTION_OPTION;		
 		}
-		else {
-			printf(CYAN "\t%lf - %lf = %lf (" YELLOW "ROUNDED: " CYAN "%lf)\n" CRESET, f1_out, f2_out, fsub.float_i, fsub_out);
+
+		if (choice_type == 1) {
+			printf(GREEN "\nInsert float 1 in hex: " CRESET);
+			scanf("%lx", &f1.int_i);
+			printf(GREEN "Insert float 2 in hex: " CRESET);
+			scanf("%lx", &f2.int_i);
+			hex_to_float(f1, &f1_out);
+			hex_to_float(f2, &f2_out);
+			fsub.float_i = f1_out - f2_out;
+			exact = float_to_hex(fsub, &myfloat_h, &fsub_out);
+			printf(CYAN "\n\tf1_out - f2_out = fsub.float_i\n" CRESET);
+			if (exact == 1) {
+				printf(CYAN "\t%lf - %lf = %lf\n" CRESET, f1_out, f2_out, fsub.float_i);
+			}
+			else {
+				printf(CYAN "\t%lf - %lf = %lf (" YELLOW "ROUNDED: " CYAN "%lf)\n" CRESET, f1_out, f2_out, fsub.float_i, fsub_out);
+			}
+			printf(CYAN "\t(0x%lx) - (0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, f2.int_i, myfloat_h);
+		/************************************************************************************************************************/
+		}	else if (choice_type == 2) {
+			for (int i=0; i<number_of_floats; i++){
+				for (int j=0; j<number_of_floats; j++){
+					f1.int_i = i;
+					f2.int_i = j;
+					hex_to_float(f1, &f1_out);
+					hex_to_float(f2, &f2_out);
+					fsub.float_i = f1_out - f2_out;
+					float_to_hex(fsub, &mysub_h, &fsub_out);
+					printf(CYAN "\t0x%.*lx\t0x%.*lx\t0x%.*lx\n" CRESET, 
+							float_size/4, f1.int_i, float_size/4, f2.int_i,
+							float_size/4, mysub_h
+					  	  );
+				}
+			}
 		}
-		printf(CYAN "\t(0x%lx) - (0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, f2.int_i, myfloat_h);
 	}
 
 	if (op_type == 4) {
 		printf(GREEN "\nMULTIPLICATION\n");
-		printf(GREEN "\nInsert float 1 in hex: " CRESET);
-		scanf("%lx", &f1.int_i);
-		printf(GREEN "Insert float 2 in hex: " CRESET);
-		scanf("%lx", &f2.int_i);
-		hex_to_float(f1, &f1_out);
-		hex_to_float(f2, &f2_out);
-		fmul.float_i = f1_out * f2_out;
-		exact = float_to_hex(fmul, &myfloat_h, &fmul_out);
-		printf(CYAN "\n\tf1_out * f2_out = fmul.float_i\n" CRESET);
-		if (exact == 1) {
-			printf(CYAN "\t%lf * %lf = %lf\n" CRESET, f1_out, f2_out, fmul.float_i);
-		}
-		else {
-			printf(CYAN "\t%lf * %lf = %lf (" YELLOW "ROUNDED: " CYAN "%lf)\n" CRESET, f1_out, f2_out, fmul.float_i, fmul_out);
-		}
-		printf(CYAN "\t(0x%lx) * (0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, f2.int_i, myfloat_h);
-	}
+	MULTIPLICATION_OPTION:
+		printf(      "\nCHOOSE OPTION:\n"
+					 "	(1)  SINGLE MULTIPLICATION\n"
+					 "	(2)  ALL POSSIBLE MULTIPLICATIONS\n"
+					 "\nOPTION: "
+					);
+		scanf("%d", &choice_type);
 
+		int valid_choice_type = check_input_choice_type();
+		if (valid_choice_type == FP_ERROR) {
+			goto MULTIPLICATION_OPTION;		
+		}
+
+		if (choice_type == 1) {
+			printf(GREEN "\nInsert float 1 in hex: " CRESET);
+			scanf("%lx", &f1.int_i);
+			printf(GREEN "Insert float 2 in hex: " CRESET);
+			scanf("%lx", &f2.int_i);
+			hex_to_float(f1, &f1_out);
+			hex_to_float(f2, &f2_out);
+			fmul.float_i = f1_out * f2_out;
+			exact = float_to_hex(fmul, &myfloat_h, &fmul_out);
+			printf(CYAN "\n\tf1_out * f2_out = fmul.float_i\n" CRESET);
+			if (exact == 1) {
+				printf(CYAN "\t%lf * %lf = %lf\n" CRESET, f1_out, f2_out, fmul.float_i);
+			}
+			else {
+				printf(CYAN "\t%lf * %lf = %lf (" YELLOW "ROUNDED: " CYAN "%lf)\n" CRESET, f1_out, f2_out, fmul.float_i, fmul_out);
+			}
+			printf(CYAN "\t(0x%lx) * (0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, f2.int_i, myfloat_h);
+			/************************************************************************************************************************/
+		}   else if (choice_type == 2) {
+			for (int i=0; i<number_of_floats; i++){
+				for (int j=0; j<number_of_floats; j++){
+					f1.int_i = i;
+					f2.int_i = j;
+					hex_to_float(f1, &f1_out);
+					hex_to_float(f2, &f2_out);
+					fmul.float_i = f1_out * f2_out;
+					float_to_hex(fmul, &mymul_h, &fmul_out);
+					printf(CYAN "\t0x%.*lx\t0x%.*lx\t0x%.*lx\n" CRESET, 
+							float_size/4, f1.int_i, float_size/4, f2.int_i,
+							float_size/4, mymul_h
+				  	 	 );
+				}	
+			}
+		}
+	}
 
 	if (op_type == 5) {
 		printf(GREEN "\nDIVISION\n");
-		printf(GREEN "\nInsert float 1 in hex: " CRESET);
-		scanf("%lx", &f1.int_i);
-		printf(GREEN "Insert float 2 in hex: " CRESET);
-		scanf("%lx", &f2.int_i);
-		hex_to_float(f1, &f1_out);
-		hex_to_float(f2, &f2_out);
-		fdiv.float_i = f1_out / f2_out;
-		exact = float_to_hex(fdiv, &myfloat_h, &fdiv_out);
-		printf(CYAN "\n\tf1_out / f2_out = fdiv.float_i\n" CRESET);
-		if (exact == 1) {
-			printf(CYAN "\t%lf / %lf = %lf\n" CRESET, f1_out, f2_out, fdiv.float_i);
+	DIVISION_OPTION:
+		printf(      "\nCHOOSE OPTION:\n"
+					 "	(1)  SINGLE DIVISION\n"
+					 "	(2)  ALL POSSIBLE DIVISIONS\n"
+					 "\nOPTION: "
+					);
+		scanf("%d", &choice_type);
+
+		int valid_choice_type = check_input_choice_type();
+		if (valid_choice_type == FP_ERROR) {
+			goto DIVISION_OPTION;		
 		}
-		else {
-			printf(CYAN "\t%lf / %lf = %lf (" YELLOW "ROUNDED: " CYAN "%lf)\n" CRESET, f1_out, f2_out, fdiv.float_i, fdiv_out);
+
+		if (choice_type == 1) {
+			printf(GREEN "\nInsert float 1 in hex: " CRESET);
+			scanf("%lx", &f1.int_i);
+			printf(GREEN "Insert float 2 in hex: " CRESET);
+			scanf("%lx", &f2.int_i);
+			hex_to_float(f1, &f1_out);
+			hex_to_float(f2, &f2_out);
+			fdiv.float_i = f1_out / f2_out;
+			exact = float_to_hex(fdiv, &myfloat_h, &fdiv_out);
+			printf(CYAN "\n\tf1_out / f2_out = fdiv.float_i\n" CRESET);
+			if (exact == 1) {
+				printf(CYAN "\t%lf / %lf = %lf\n" CRESET, f1_out, f2_out, fdiv.float_i);
+			}
+			else {
+				printf(CYAN "\t%lf / %lf = %lf (" YELLOW "ROUNDED: " CYAN "%lf)\n" CRESET, f1_out, f2_out, fdiv.float_i, fdiv_out);
+			}
+			printf(CYAN "\t(0x%lx) / (0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, f2.int_i, myfloat_h);
+			/************************************************************************************************************************/
+		}	else if (choice_type == 2) {
+			for (int i=0; i<number_of_floats; i++){
+				for (int j=0; j<number_of_floats; j++){
+					f1.int_i = i;
+					f2.int_i = j;
+					hex_to_float(f1, &f1_out);
+					hex_to_float(f2, &f2_out);
+					fdiv.float_i = f1_out / f2_out;
+					float_to_hex(fdiv, &mydiv_h, &fdiv_out);
+					printf(CYAN "\t0x%.*lx\t0x%.*lx\t0x%.*lx\n" CRESET, 
+							float_size/4, f1.int_i, float_size/4, f2.int_i,
+							float_size/4, mydiv_h
+					  	  );
+				}
+			}
 		}
-		printf(CYAN "\t(0x%lx) / (0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, f2.int_i, myfloat_h);
 	}
 
 	if (op_type == 6) {
 		printf(GREEN "\nSQUARE ROOT\n");
-		printf(GREEN "\nInsert your float in hex: " CRESET);
-		scanf("%lx", &f1.int_i);
-		hex_to_float(f1, &f1_out);
-		fsqrt.float_i = sqrt(f1_out);
-		exact = float_to_hex(fsqrt, &myfloat_h, &fsqrt_out);
-		printf(CYAN "\n\tfsqrt(float_i)\n" CRESET);
-		printf(CYAN "\tfsqrt(%lf) = %lf\n" CRESET, f1_out, fsqrt.float_i);
-		printf(CYAN "\tfsqrt(0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, myfloat_h);
+	SQRT_OPTION:
+		printf(      "\nCHOOSE OPTION:\n"
+					 "	(1)  SINGLE SQUARE ROOT\n"
+					 "	(2)  ALL POSSIBLE SQUARE ROOTS\n"
+					 "\nOPTION: "
+					);
+		scanf("%d", &choice_type);
+
+		int valid_choice_type = check_input_choice_type();
+		if (valid_choice_type == FP_ERROR) {
+			goto SQRT_OPTION;		
+		}
+
+		if (choice_type == 1) {
+			printf(GREEN "\nInsert your float in hex: " CRESET);
+			scanf("%lx", &f1.int_i);
+			hex_to_float(f1, &f1_out);
+			fsqrt.float_i = sqrt(f1_out);
+			exact = float_to_hex(fsqrt, &myfloat_h, &fsqrt_out);
+			printf(CYAN "\n\tfsqrt(float_i)\n" CRESET);
+			printf(CYAN "\tfsqrt(%lf) = %lf\n" CRESET, f1_out, fsqrt.float_i);
+			printf(CYAN "\tfsqrt(0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, myfloat_h);
+		/************************************************************************************************************************/
+		}	else if (choice_type == 2) {
+			for (int i=0; i<number_of_floats; i++){
+				f1.int_i = i;
+				hex_to_float(f1, &f1_out);
+				fsqrt.float_i = sqrt(f1_out);
+				float_to_hex(fsqrt, &myfloat_h, &fsqrt_out);
+				printf(CYAN "\t0x%.*lx\t0x%.*lx\n" CRESET, 
+						float_size/4, f1.int_i, float_size/4, myfloat_h
+				  	  );
+			}
+		}
 	}
 
 	if (op_type == 7) {
 		printf(GREEN "\nFUSED MULTIPLY-ADD\n");
-		printf(GREEN "\nInsert float 1 in hex: " CRESET);
-		scanf("%lx", &f1.int_i);
-		printf(GREEN "Insert float 2 in hex: " CRESET);
-		scanf("%lx", &f2.int_i);
-		printf(GREEN "Insert float 3 in hex: " CRESET);
-		scanf("%lx", &f3.int_i);
-		hex_to_float(f1, &f1_out);
-		hex_to_float(f2, &f2_out);
-		hex_to_float(f3, &f3_out);
-		fma.float_i = (f1_out * f2_out) + f3_out;
-		exact = float_to_hex(fma, &myfloat_h, &fma_out);
-		printf(CYAN "\n\t(f1_out * f2_out) + f3_out = fma.float_i\n" CRESET);
-		printf(CYAN "\t(%lf * %lf) + %lf = %lf\n" CRESET, f1_out, f2_out, f3_out, fma.float_i);
-		printf(CYAN "\t((0x%lx) * (0x%lx)) + (0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, f2.int_i, f3.int_i, myfloat_h);
+	FMA_OPTION:
+		printf(      "\nCHOOSE OPTION:\n"
+					 "	(1)  SINGLE FUSED MULTIPLY-ADD\n"
+					 "	(2)  ALL POSSIBLE FUSED MULTIPLY-ADD\n"
+					 "\nOPTION: "
+					);
+		scanf("%d", &choice_type);
+
+		int valid_choice_type = check_input_choice_type();
+		if (valid_choice_type == FP_ERROR) {
+			goto FMA_OPTION;		
+		}
+
+		if (choice_type == 1) {	
+			printf(GREEN "\nInsert float 1 in hex: " CRESET);
+			scanf("%lx", &f1.int_i);
+			printf(GREEN "Insert float 2 in hex: " CRESET);
+			scanf("%lx", &f2.int_i);
+			printf(GREEN "Insert float 3 in hex: " CRESET);
+			scanf("%lx", &f3.int_i);
+			hex_to_float(f1, &f1_out);
+			hex_to_float(f2, &f2_out);
+			hex_to_float(f3, &f3_out);
+			fma.float_i = (f1_out * f2_out) + f3_out;
+			exact = float_to_hex(fma, &myfloat_h, &fma_out);
+			printf(CYAN "\n\t(f1_out * f2_out) + f3_out = fma.float_i\n" CRESET);
+			printf(CYAN "\t(%lf * %lf) + %lf = %lf\n" CRESET, f1_out, f2_out, f3_out, fma.float_i);
+			printf(CYAN "\t((0x%lx) * (0x%lx)) + (0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, f2.int_i, f3.int_i, myfloat_h);
+		/************************************************************************************************************************/
+		}   else if (choice_type == 2) {
+			for (int i=0; i<number_of_floats; i++){
+				for (int j=0; j<number_of_floats; j++){
+					for (int k=0; k<number_of_floats; k++){
+						f1.int_i = i;
+						f2.int_i = j;
+						f3.int_i = k;
+						hex_to_float(f1, &f1_out);
+						hex_to_float(f2, &f2_out);
+						hex_to_float(f3, &f3_out);
+						fma.float_i = (f1_out * f2_out) + f3_out;
+						float_to_hex(fma, &myfloat_h, &fma_out);
+						printf(CYAN "\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\n" CRESET, 
+								float_size/4, f1.int_i, float_size/4, f2.int_i,
+								float_size/4, f3.int_i, float_size/4, myfloat_h
+						  	  );
+					}
+				}
+			}
+		}
 	}
 
 	if (op_type == 9) {

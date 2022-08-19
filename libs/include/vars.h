@@ -7,6 +7,7 @@ extern int bias;
 extern char custom_bias;
 
 extern int op_type;
+extern int choice_type;
 extern int conv_type;
 extern int round_mode;
 

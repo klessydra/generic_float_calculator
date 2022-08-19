@@ -10,6 +10,7 @@ int check_input_exponent();
 int check_input_mantissa();
 int check_input_bias();
 int check_input_op_type();
+int check_input_choice_type();
 int check_input_conv_type();
 int check_input_rounding_mode();
 
