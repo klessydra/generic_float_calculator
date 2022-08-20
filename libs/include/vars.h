@@ -24,7 +24,7 @@ extern double mnt_range;
 extern double upper_bound_2;
 extern double exp_range_2;
 extern double mnt_range_2;
-
+ 
 extern int float_set;
 extern int exponent_set;
 extern int mantissa_set;
