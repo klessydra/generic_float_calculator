@@ -26,6 +26,26 @@ int check_input_float() {
 	return FP_SUCCESS;
 }
 
+int check_input_float_2() {
+	static unsigned int error_cnt_float_size = 0;
+	if (float_size_2 < 4) { // 3-bit custom floats and smaller aren't allowed
+		if (error_cnt_float_size == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (error_cnt_float_size > 0) {
+			printf(RED "ERROR: " WHITE "Invalid float size (PLEASE ENTER A FLOAT SIZE > 3)\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Invalid float size\n" CRESET);
+		}
+		error_cnt_float_size++;
+		printf("\n");
+		return FP_ERROR;
+	}
+	return FP_SUCCESS;
+}
+
 int check_input_exponent() {
 	static unsigned int error_cnt_exponent_size = 0;
 	if (exponent_size < 2 || exponent_size > float_size-2) {
@@ -46,9 +66,49 @@ int check_input_exponent() {
 	return FP_SUCCESS;
 }
 
+int check_input_exponent_2() {
+	static unsigned int error_cnt_exponent_size = 0;
+	if (exponent_size_2 < 2 || exponent_size_2 > float_size_2-2) {
+		if (error_cnt_exponent_size == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (error_cnt_exponent_size > 0) {
+			printf(RED "ERROR: " WHITE "Invalid exponent size (PLEASE ENTER AN EXPONENT SIZE > 1 && < FLOAT_SIZE -1)\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Invalid exponent size\n" CRESET);
+		}
+		error_cnt_exponent_size++;
+		printf("\n");
+		return FP_ERROR;
+	}
+	return FP_SUCCESS;
+}
+
 int check_input_mantissa() {
 	static unsigned int error_cnt_mantissa_size = 0;
 	if (mantissa_size <= 0 || exponent_size + mantissa_size != float_size-1) {
+		if (error_cnt_mantissa_size == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (error_cnt_mantissa_size > 0) {
+			printf(RED "ERROR: " WHITE "Invalid mantissa size (PLEASE ENTER A MANTISSA SIZE > 0 && < (FLOAT_SIZE - EXPONENT_SIZE -1))\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Invalid mantissa size\n" CRESET);
+		}
+		error_cnt_mantissa_size++;
+		printf("\n");
+		return FP_ERROR;
+	}
+	return FP_SUCCESS;
+}
+
+int check_input_mantissa_2() {
+	static unsigned int error_cnt_mantissa_size = 0;
+	if (mantissa_size_2 <= 0 || exponent_size_2 + mantissa_size_2 != float_size_2-1) {
 		if (error_cnt_mantissa_size == 10) {
 			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
 			exit(-1);
@@ -94,6 +154,33 @@ int check_input_bias() {
 	return FP_SUCCESS;
 }
 
+int check_input_bias_2() {
+	static unsigned int error_cnt_bias_size = 0;
+	if (custom_bias_2 == 'y' || custom_bias_2 == 'Y') {
+    	printf("Enter bias: ");
+    	scanf("%d", &bias_2);
+    }
+    else if (custom_bias_2 == 'n' || custom_bias_2 == 'N') {
+    	printf(BLUE "Defaulting bias to 2^(%d)-1 = " CRESET "%d\n", exponent_size_2-1, (int)pow(2,exponent_size_2-1)-1);
+    	bias_2 = (int)pow(2,exponent_size_2-1)-1;
+	}
+	else {
+		bias_2 = '0';
+		if (error_cnt_bias_size == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}
+		if (error_cnt_bias_size > 0) {
+			printf(RED "ERROR: " WHITE "Unknown answer (PLEASE RESPOND \'Y\' OR \'y\' FOR YES, AND \'N\' OR \'n\' FOR NO)\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Unknown answer\n" CRESET);
+		}
+		error_cnt_bias_size++;
+		return FP_ERROR;
+	}
+	return FP_SUCCESS;
+}
 
 int check_input_op_type() {
 	static unsigned int error_cnt_op_type = 0;
