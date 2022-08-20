@@ -21,9 +21,9 @@ extern double upper_bound;
 extern double exp_range;
 extern double mnt_range;
 
-double upper_bound_2;
-double exp_range_2;
-double mnt_range_2;
+extern double upper_bound_2;
+extern double exp_range_2;
+extern double mnt_range_2;
 
 extern int float_set;
 extern int exponent_set;
