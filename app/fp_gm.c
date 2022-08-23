@@ -24,10 +24,11 @@ char custom_bias_2;
 
 int op_type;
 int choice_type;
-int end;
 int conv_type;
 int round_mode;
 int integer_width;
+
+char file_print = 'Y';
 
 double upper_bound;
 double exp_range;
@@ -46,6 +47,28 @@ int float_set_2 = 0;
 int exponent_set_2 = 0;
 int mantissa_set_2 = 0;
 int bias_set_2 = 0;
+
+FILE file1;
+FILE file2;
+FILE file3;
+FILE file_num;
+FILE file_add;
+FILE file_sub;
+FILE file_mul;
+FILE file_div;
+FILE file_sqrt;
+FILE file_fma;
+
+FILE* file1_ptr     = &file1;
+FILE* file2_ptr     = &file2;
+FILE* file3_ptr     = &file3;
+FILE* file_num_ptr  = &file_num;
+FILE* file_add_ptr  = &file_add;
+FILE* file_sub_ptr  = &file_sub;
+FILE* file_mul_ptr  = &file_mul;
+FILE* file_div_ptr  = &file_div;
+FILE* file_sqrt_ptr = &file_sqrt;
+FILE* file_fma_ptr  = &file_fma;
 
 int main(unsigned int argc, char** argv) {
 
@@ -158,6 +181,35 @@ int main(unsigned int argc, char** argv) {
 		}
 	}
 
+	PRINT_RES:
+	printf(BLUE "\nDo you want to Print the result to a file (Y/N): " CRESET);
+	scanf(" %c", &file_print);	
+	int valid_print_out_answer = check_input_print_answer();
+	if (valid_print_out_answer == FP_ERROR) {
+		goto PRINT_RES;		
+	}
+
+	char* filename1     = malloc(200*sizeof(char));
+	char* filename2     = malloc(200*sizeof(char));
+	char* filename3     = malloc(200*sizeof(char));
+	char* filename_num  = malloc(200*sizeof(char));
+	char* filename_add  = malloc(200*sizeof(char));
+	char* filename_sub  = malloc(200*sizeof(char));
+	char* filename_mul  = malloc(200*sizeof(char));
+	char* filename_div  = malloc(200*sizeof(char));
+	char* filename_sqrt = malloc(200*sizeof(char));
+	char* filename_fma  = malloc(200*sizeof(char));
+	sprintf(filename1,     "result/fp%d(1-%d-%d)_1_op_res.txt", float_size, exponent_size, mantissa_size);
+	sprintf(filename2,     "result/fp%d(1-%d-%d)_2_op_res.txt", float_size, exponent_size, mantissa_size);
+	sprintf(filename3,     "result/fp%d(1-%d-%d)_3_op_res.txt", float_size, exponent_size, mantissa_size);
+	sprintf(filename_num,  "result/fp%d(1-%d-%d)_num_res.txt",  float_size, exponent_size, mantissa_size);
+	sprintf(filename_add,  "result/fp%d(1-%d-%d)_add_res.txt",  float_size, exponent_size, mantissa_size);
+	sprintf(filename_sub,  "result/fp%d(1-%d-%d)_sub_res.txt",  float_size, exponent_size, mantissa_size);
+	sprintf(filename_mul,  "result/fp%d(1-%d-%d)_mul_res.txt",  float_size, exponent_size, mantissa_size);
+	sprintf(filename_div,  "result/fp%d(1-%d-%d)_div_res.txt",  float_size, exponent_size, mantissa_size);
+	sprintf(filename_sqrt, "result/fp%d(1-%d-%d)_sqrt_res.txt", float_size, exponent_size, mantissa_size);
+	sprintf(filename_fma,  "result/fp%d(1-%d-%d)_fma_res.txt",  float_size, exponent_size, mantissa_size);
+
 	//double mantissa_upper_bound = 1.0;
 	//for (int i=1; i<=mantissa_size; i++) {
 	//	mantissa_upper_bound += 1.0/pow(2,i);
@@ -172,9 +224,106 @@ int main(unsigned int argc, char** argv) {
 	exp_range = pow(2,exponent_size);
 	mnt_range = pow(2,mantissa_size);
 
+	FILE *out1_result;
+	FILE *out2_result;
+	FILE *out3_result;
+	FILE *out_num_result;
+	FILE *out_add_result;
+	FILE *out_sub_result;
+	FILE *out_mul_result;
+	FILE *out_div_result;
+	FILE *out_sqrt_result;
+	FILE *out_fma_result;
+	//char green = ' ';
+
+	char* black  = malloc(sizeof BLACK);
+	char* red    = malloc(sizeof RED);
+	char* green  = malloc(sizeof GREEN);
+	char* yellow = malloc(sizeof YELLOW);
+	char* blue   = malloc(sizeof BLUE);
+	char* purple = malloc(sizeof PURPLE);
+	char* cyan   = malloc(sizeof CYAN);
+	char* white  = malloc(sizeof WHITE);
+	char* creset = malloc(sizeof CRESET);
+
+	if (file_print == 'Y' || file_print == 'y') {
+		if (op_type == 0) {
+			file1_ptr    = fopen(filename1, "w");
+			file2_ptr    = fopen(filename2, "w");
+			file3_ptr    = fopen(filename3, "w");
+		}
+		else if (op_type == 1)
+			file_num_ptr = fopen(filename_num, "w");
+		else if (op_type == 2)
+			file_add_ptr = fopen(filename_add, "w");
+		else if (op_type == 3)
+			file_sub_ptr = fopen(filename_sub, "w");
+		else if (op_type == 4)
+			file_mul_ptr = fopen(filename_mul, "w");
+		else if (op_type == 5)
+			file_div_ptr = fopen(filename_div, "w");
+		else if (op_type == 6)
+			file_sqrt_ptr = fopen(filename_sqrt, "w");
+		else if (op_type == 7)
+			file_fma_ptr = fopen(filename_fma, "w");
+		out1_result     = file1_ptr;
+		out2_result     = file2_ptr;
+		out3_result     = file3_ptr;
+		out_num_result  = file_num_ptr;
+		out_add_result  = file_add_ptr;
+		out_sub_result  = file_sub_ptr;
+		out_mul_result  = file_mul_ptr;
+		out_div_result  = file_div_ptr;
+		out_sqrt_result = file_sqrt_ptr;
+		out_fma_result  = file_fma_ptr;
+		black  = "";
+		red    = "";
+		green  = "";
+		yellow = "";
+		blue   = "";
+		purple = "";
+		cyan   = "";
+		white  = "";
+		creset = "";
+	}
+	else {
+		out1_result     = stdout; 
+		out2_result     = stdout; 
+		out3_result     = stdout; 
+		out_num_result  = stdout; 
+		out_add_result  = stdout; 
+		out_sub_result  = stdout; 
+		out_mul_result  = stdout; 
+		out_div_result  = stdout;
+		out_sqrt_result = stdout;
+		out_fma_result  = stdout;
+		black  = BLACK;
+		red    = RED;
+		green  = GREEN;
+		yellow = YELLOW;
+		blue   = BLUE;
+		purple = PURPLE;
+		cyan   = CYAN;
+		white  = WHITE;
+		creset = CRESET;
+	}
+
 	if (op_type == 0) {
-		printf(GREEN "\nFLOAT_%d (1-%d-%d)\n", float_size, exponent_size, mantissa_size);
-		printf(GREEN "\n\tOP_A\tOP_B\tADD\tSUB\tMUL\tDIV\n");
+		fprintf(out2_result, "%s\nFLOAT_%d (1-%d-%d)\n", green, float_size, exponent_size, mantissa_size);
+		fprintf(out2_result,  "%s\n\tOP_A\tSQRT\n", green);
+		for (int i=0; i<number_of_floats; i++){
+				f1.int_i = i;
+				hex_to_float(f1, &f1_out);
+				fsqrt.float_i = sqrt(f1_out);
+				float_to_hex(fsqrt, &myfloat_h, &fsqrt_out);
+				fprintf(out1_result, "%s\t0x%.*lx\t0x%.*lx\n%s", 
+						cyan,
+						float_size/4, f1.int_i, float_size/4, myfloat_h,
+						creset
+					  );
+		}
+		fprintf(out2_result, "%s\nFLOAT_%d (1-%d-%d)\n", green, float_size, exponent_size, mantissa_size);
+		fprintf(out2_result,  "%s\n\tOP_A\tOP_B\tADD\tSUB\tMUL\tDIV\n", green);
 		for (int i=0; i<number_of_floats; i++){
 			for (int j=0; j<number_of_floats; j++){
 				f1.int_i = i;
@@ -189,29 +338,56 @@ int main(unsigned int argc, char** argv) {
 				float_to_hex(fsub, &mysub_h, &fsub_out);
 				float_to_hex(fmul, &mymul_h, &fmul_out);
 				float_to_hex(fdiv, &mydiv_h, &fdiv_out);
-				printf(CYAN "\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\n" CRESET, 
+				fprintf(out2_result, "%s\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\n%s", 
+						cyan,
 						float_size/4, f1.int_i, float_size/4, f2.int_i,
 						float_size/4, mysum_h,  float_size/4, mysub_h, 
-						float_size/4, mymul_h,  float_size/4, mydiv_h
+						float_size/4, mymul_h,  float_size/4, mydiv_h,
+						creset
 					  );
 				//printf(CYAN "\t%lx (%lf)\t%lx (%lf)\t%lx (%lf)\t%lx (%lf)\t%lx (%lf)\t%lx (%lf)\n\n" CRESET, 
 				//		f1.int_i, f1_out, f2.int_i, f2_out, mysum_h, fsum_out, mysub_h, fsub_out, mymul_h, fmul_out, mydiv_h, fdiv_out);
 			}
 		}
+		fprintf(out2_result, "%s\nFLOAT_%d (1-%d-%d)\n", green, float_size, exponent_size, mantissa_size);
+		fprintf(out2_result,  "%s\n\tOP_A\tOP_B\tOP_C\tFMA\n", green);
+		for (int i=0; i<number_of_floats; i++){
+			for (int j=0; j<number_of_floats; j++){
+				for (int k=0; k<number_of_floats; k++){
+					f1.int_i = i;
+					f2.int_i = j;
+					f3.int_i = k;
+					hex_to_float(f1, &f1_out);
+					hex_to_float(f2, &f2_out);
+					hex_to_float(f3, &f3_out);
+					fma.float_i = (f1_out * f2_out) + f3_out;
+					float_to_hex(fma, &myfloat_h, &fma_out);
+					fprintf(out3_result, "%s\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\n%s", 
+							cyan,
+							float_size/4, f1.int_i, float_size/4, f2.int_i, float_size/4, f3.int_i,
+							float_size/4, myfloat_h,
+							creset
+						  );
+				}
+			}
+		}
+		fclose(out1_result);
+		fclose(out2_result);
+		fclose(out3_result);
 	}
 
 	if (op_type == 1) {
-		printf(GREEN "\nFLOAT_%d (1-%d-%d)\n", float_size, exponent_size, mantissa_size);
+		fprintf(out_num_result, "%s\nFLOAT_%d (1-%d-%d)\n", green, float_size, exponent_size, mantissa_size);
 		for (int i=0; i<number_of_floats; i++){
 			f1.int_i = i;
 			hex_to_float(f1,  &f1_out);
-			printf(CYAN "\t0x%lx (%E)\n" CRESET, f1.int_i, f1_out);
+			fprintf(out_num_result, "%s\t0x%lx (%E)\n%s", cyan, f1.int_i, f1_out, creset);
 		}
 	}
 
 	if (op_type == 2) {
 		printf(GREEN "\nADDITION\n");
-	ADDITION_OPTION:
+		ADDITION_OPTION:
 		printf(      "\nCHOOSE OPTION:\n"
 					 "	(1)  SINGLE ADDITION\n"
 					 "	(2)  ALL POSSIBLE ADDITIONS\n"
@@ -233,14 +409,14 @@ int main(unsigned int argc, char** argv) {
 			hex_to_float(f2, &f2_out);
 			fsum.float_i = f1_out + f2_out;
 			exact = float_to_hex(fsum, &myfloat_h, &fsum_out);
-			printf(CYAN "\n\tf1_out + f2_out = fsum.float_i\n" CRESET);
+			fprintf(out_add_result, "%s\n\tf1_out + f2_out = fsum.float_i\n%s", cyan, creset);
 			if (exact == 1) {
-				printf(CYAN "\t%lf + %lf = %lf\n" CRESET, f1_out, f2_out, fsum.float_i);
+				fprintf(out_add_result, "%s\t%lf + %lf = %lf\n%s", cyan, f1_out, f2_out, fsum.float_i, creset);
 			}
 			else {
-				printf(CYAN "\t%lf + %lf = %lf (" YELLOW "ROUNDED: " CYAN "%lf)\n" CRESET, f1_out, f2_out, fsum.float_i, fsum_out);
+				fprintf(out_add_result, "%s\t%lf + %lf = %lf (%sROUNDED: %s%lf)\n%s", cyan, f1_out, f2_out, fsum.float_i, yellow, cyan, fsum_out, creset);
 			}
-			printf(CYAN "\t(0x%lx) + (0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, f2.int_i, myfloat_h);
+			fprintf(out_add_result, "%s\t(0x%lx) + (0x%lx) = (0x%lx)\n\n%s", cyan, f1.int_i, f2.int_i, myfloat_h, creset);
 		/************************************************************************************************************************/
 		}	else if (choice_type == 2) {
 			for (int i=0; i<number_of_floats; i++){
@@ -251,9 +427,11 @@ int main(unsigned int argc, char** argv) {
 					hex_to_float(f2, &f2_out);
 					fsum.float_i = f1_out + f2_out;
 					float_to_hex(fsum, &mysum_h, &fsum_out);
-					printf(CYAN "\t0x%.*lx\t0x%.*lx\t0x%.*lx\n" CRESET, 
+					fprintf(out_add_result, "%s\t0x%.*lx\t0x%.*lx\t0x%.*lx\n%s", 
+							cyan, 
 							float_size/4, f1.int_i, float_size/4, f2.int_i,
-							float_size/4, mysum_h
+							float_size/4, mysum_h,
+							creset
 					  	  );
 				}
 			}
@@ -284,14 +462,14 @@ int main(unsigned int argc, char** argv) {
 			hex_to_float(f2, &f2_out);
 			fsub.float_i = f1_out - f2_out;
 			exact = float_to_hex(fsub, &myfloat_h, &fsub_out);
-			printf(CYAN "\n\tf1_out - f2_out = fsub.float_i\n" CRESET);
+			fprintf(out_sub_result, "%s\n\tf1_out - f2_out = fsub.float_i\n%s", cyan, creset);
 			if (exact == 1) {
-				printf(CYAN "\t%lf - %lf = %lf\n" CRESET, f1_out, f2_out, fsub.float_i);
+				fprintf(out_sub_result, "%s\t%lf - %lf = %lf\n%s", cyan, f1_out, f2_out, fsub.float_i, creset);
 			}
 			else {
-				printf(CYAN "\t%lf - %lf = %lf (" YELLOW "ROUNDED: " CYAN "%lf)\n" CRESET, f1_out, f2_out, fsub.float_i, fsub_out);
+				fprintf(out_sub_result, "%s\t%lf - %lf = %lf (%sROUNDED: %s%lf)\n%s", cyan, f1_out, f2_out, fsub.float_i, yellow, cyan, fsub_out, creset);
 			}
-			printf(CYAN "\t(0x%lx) - (0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, f2.int_i, myfloat_h);
+			fprintf(out_sub_result, "%s\t(0x%lx) - (0x%lx) = (0x%lx)\n\n%s", cyan, f1.int_i, f2.int_i, myfloat_h, creset);
 		/************************************************************************************************************************/
 		}	else if (choice_type == 2) {
 			for (int i=0; i<number_of_floats; i++){
@@ -302,9 +480,11 @@ int main(unsigned int argc, char** argv) {
 					hex_to_float(f2, &f2_out);
 					fsub.float_i = f1_out - f2_out;
 					float_to_hex(fsub, &mysub_h, &fsub_out);
-					printf(CYAN "\t0x%.*lx\t0x%.*lx\t0x%.*lx\n" CRESET, 
+					fprintf(out_sub_result, "%s\t0x%.*lx\t0x%.*lx\t0x%.*lx\n%s",
+							cyan, 
 							float_size/4, f1.int_i, float_size/4, f2.int_i,
-							float_size/4, mysub_h
+							float_size/4, mysub_h,
+							creset
 					  	  );
 				}
 			}
@@ -335,14 +515,14 @@ int main(unsigned int argc, char** argv) {
 			hex_to_float(f2, &f2_out);
 			fmul.float_i = f1_out * f2_out;
 			exact = float_to_hex(fmul, &myfloat_h, &fmul_out);
-			printf(CYAN "\n\tf1_out * f2_out = fmul.float_i\n" CRESET);
+			fprintf(out_mul_result, "%s\n\tf1_out * f2_out = fmul.float_i\n%s",  cyan, creset);
 			if (exact == 1) {
-				printf(CYAN "\t%lf * %lf = %lf\n" CRESET, f1_out, f2_out, fmul.float_i);
+				fprintf(out_mul_result, "%s\t%lf * %lf = %lf\n%s", cyan, f1_out, f2_out, fmul.float_i, creset);
 			}
 			else {
-				printf(CYAN "\t%lf * %lf = %lf (" YELLOW "ROUNDED: " CYAN "%lf)\n" CRESET, f1_out, f2_out, fmul.float_i, fmul_out);
+				fprintf(out_mul_result, "%s\t%lf * %lf = %lf (%sROUNDED: %s%lf)\n%s", cyan, f1_out, f2_out, fmul.float_i, yellow, cyan, fmul_out, creset);
 			}
-			printf(CYAN "\t(0x%lx) * (0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, f2.int_i, myfloat_h);
+			fprintf(out_mul_result, "%s\t(0x%lx) * (0x%lx) = (0x%lx)\n\n%s", cyan, f1.int_i, f2.int_i, myfloat_h, creset);
 			/************************************************************************************************************************/
 		}   else if (choice_type == 2) {
 			for (int i=0; i<number_of_floats; i++){
@@ -353,9 +533,11 @@ int main(unsigned int argc, char** argv) {
 					hex_to_float(f2, &f2_out);
 					fmul.float_i = f1_out * f2_out;
 					float_to_hex(fmul, &mymul_h, &fmul_out);
-					printf(CYAN "\t0x%.*lx\t0x%.*lx\t0x%.*lx\n" CRESET, 
+					fprintf(out_mul_result, "%s\t0x%.*lx\t0x%.*lx\t0x%.*lx\n%s",
+							cyan, 
 							float_size/4, f1.int_i, float_size/4, f2.int_i,
-							float_size/4, mymul_h
+							float_size/4, mymul_h,
+							creset
 				  	 	 );
 				}	
 			}
@@ -386,14 +568,14 @@ int main(unsigned int argc, char** argv) {
 			hex_to_float(f2, &f2_out);
 			fdiv.float_i = f1_out / f2_out;
 			exact = float_to_hex(fdiv, &myfloat_h, &fdiv_out);
-			printf(CYAN "\n\tf1_out / f2_out = fdiv.float_i\n" CRESET);
+			fprintf(out_div_result, "%s\n\tf1_out / f2_out = fdiv.float_i\n%s", cyan, creset);
 			if (exact == 1) {
-				printf(CYAN "\t%lf / %lf = %lf\n" CRESET, f1_out, f2_out, fdiv.float_i);
+				fprintf(out_div_result, "%s\t%lf / %lf = %lf\n%s", cyan, f1_out, f2_out, fdiv.float_i, creset);
 			}
 			else {
-				printf(CYAN "\t%lf / %lf = %lf (" YELLOW "ROUNDED: " CYAN "%lf)\n" CRESET, f1_out, f2_out, fdiv.float_i, fdiv_out);
+				fprintf(out_div_result, "%s\t%lf / %lf = %lf (%sROUNDED: %s%lf)\n%s", cyan, f1_out, f2_out, fdiv.float_i, yellow, cyan,  fdiv_out, creset);
 			}
-			printf(CYAN "\t(0x%lx) / (0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, f2.int_i, myfloat_h);
+			fprintf(out_div_result, "%s\t(0x%lx) / (0x%lx) = (0x%lx)\n\n%s", cyan, f1.int_i, f2.int_i, myfloat_h, creset);
 			/************************************************************************************************************************/
 		}	else if (choice_type == 2) {
 			for (int i=0; i<number_of_floats; i++){
@@ -404,9 +586,11 @@ int main(unsigned int argc, char** argv) {
 					hex_to_float(f2, &f2_out);
 					fdiv.float_i = f1_out / f2_out;
 					float_to_hex(fdiv, &mydiv_h, &fdiv_out);
-					printf(CYAN "\t0x%.*lx\t0x%.*lx\t0x%.*lx\n" CRESET, 
+					fprintf(out_div_result, "%s\t0x%.*lx\t0x%.*lx\t0x%.*lx\n%s",
+							cyan,
 							float_size/4, f1.int_i, float_size/4, f2.int_i,
-							float_size/4, mydiv_h
+							float_size/4, mydiv_h,
+							creset
 					  	  );
 				}
 			}
@@ -429,14 +613,14 @@ int main(unsigned int argc, char** argv) {
 		}
 
 		if (choice_type == 1) {
-			printf(GREEN "\nInsert your float in hex: " CRESET);
+			fprintf(out_sqrt_result, "%s\nInsert your float in hex: %s", cyan, creset);
 			scanf("%lx", &f1.int_i);
 			hex_to_float(f1, &f1_out);
 			fsqrt.float_i = sqrt(f1_out);
 			exact = float_to_hex(fsqrt, &myfloat_h, &fsqrt_out);
-			printf(CYAN "\n\tfsqrt(float_i)\n" CRESET);
-			printf(CYAN "\tfsqrt(%lf) = %lf\n" CRESET, f1_out, fsqrt.float_i);
-			printf(CYAN "\tfsqrt(0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, myfloat_h);
+			fprintf(out_sqrt_result, "%s\n\tfsqrt(float_i)\n%s", cyan, creset);
+			fprintf(out_sqrt_result, "%s\tfsqrt(%lf) = %lf\n%s", cyan, f1_out, fsqrt.float_i, creset);
+			fprintf(out_sqrt_result, "%s\tfsqrt(0x%lx) = (0x%lx)\n\n%s", cyan, f1.int_i, myfloat_h, creset);
 		/************************************************************************************************************************/
 		}	else if (choice_type == 2) {
 			for (int i=0; i<number_of_floats; i++){
@@ -444,8 +628,10 @@ int main(unsigned int argc, char** argv) {
 				hex_to_float(f1, &f1_out);
 				fsqrt.float_i = sqrt(f1_out);
 				float_to_hex(fsqrt, &myfloat_h, &fsqrt_out);
-				printf(CYAN "\t0x%.*lx\t0x%.*lx\n" CRESET, 
-						float_size/4, f1.int_i, float_size/4, myfloat_h
+				fprintf(out_sqrt_result, "%s\t0x%.*lx\t0x%.*lx\n%s", 
+						cyan, 
+						float_size/4, f1.int_i, float_size/4, myfloat_h,
+						creset
 				  	  );
 			}
 		}
@@ -478,9 +664,9 @@ int main(unsigned int argc, char** argv) {
 			hex_to_float(f3, &f3_out);
 			fma.float_i = (f1_out * f2_out) + f3_out;
 			exact = float_to_hex(fma, &myfloat_h, &fma_out);
-			printf(CYAN "\n\t(f1_out * f2_out) + f3_out = fma.float_i\n" CRESET);
-			printf(CYAN "\t(%lf * %lf) + %lf = %lf\n" CRESET, f1_out, f2_out, f3_out, fma.float_i);
-			printf(CYAN "\t((0x%lx) * (0x%lx)) + (0x%lx) = (0x%lx)\n\n" CRESET, f1.int_i, f2.int_i, f3.int_i, myfloat_h);
+			fprintf(out_fma_result, "%s\n\t(f1_out * f2_out) + f3_out = fma.float_i\n%s", cyan, creset);
+			fprintf(out_fma_result, "%s\t(%lf * %lf) + %lf = %lf\n%s", cyan, f1_out, f2_out, f3_out, fma.float_i, creset);
+			fprintf(out_fma_result, "%s\t((0x%lx) * (0x%lx)) + (0x%lx) = (0x%lx)\n\n%s", cyan, f1.int_i, f2.int_i, f3.int_i, myfloat_h, creset);
 		/************************************************************************************************************************/
 		}   else if (choice_type == 2) {
 			for (int i=0; i<number_of_floats; i++){
@@ -494,9 +680,11 @@ int main(unsigned int argc, char** argv) {
 						hex_to_float(f3, &f3_out);
 						fma.float_i = (f1_out * f2_out) + f3_out;
 						float_to_hex(fma, &myfloat_h, &fma_out);
-						printf(CYAN "\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\n" CRESET, 
+						fprintf(out_fma_result, "%s\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\n%s", 
+								cyan, 
 								float_size/4, f1.int_i, float_size/4, f2.int_i,
-								float_size/4, f3.int_i, float_size/4, myfloat_h
+								float_size/4, f3.int_i, float_size/4, myfloat_h,
+								creset
 						  	  );
 					}
 				}

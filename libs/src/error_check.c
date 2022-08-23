@@ -258,3 +258,23 @@ int check_input_rounding_mode() {
 	}
 	return FP_SUCCESS;
 }
+
+
+int check_input_print_answer() {
+	static unsigned int error_cnt_print_answer = 0;
+	if (!(file_print == 'y' || file_print == 'Y' || file_print == 'n' || file_print == 'N')) {
+		if (error_cnt_print_answer == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}
+		if (error_cnt_print_answer > 0) {
+			printf(RED "ERROR: " WHITE "Unknown answer (PLEASE RESPOND \'Y\' OR \'y\' FOR YES, AND \'N\' OR \'n\' FOR NO)\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Unknown answer\n" CRESET);
+		}
+		error_cnt_print_answer++;
+		return FP_ERROR;
+	}
+	return FP_SUCCESS;
+}
