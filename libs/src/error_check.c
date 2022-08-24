@@ -223,13 +223,13 @@ int check_input_choice_type() {
 
 int check_input_conv_type() {
 	static unsigned int error_cnt_conv_type = 0;
-	if (conv_type < 1 || conv_type > 7) {
+	if (conv_type < 1 || conv_type > 5) {
 		if (error_cnt_conv_type == 10) {
 			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
 			exit(-1);
 		}		
 		if (error_cnt_conv_type > 0) {
-			printf(RED "ERROR: " WHITE "Invalid conversion type (PLEASE ENTER A VALID CONV TYPE NUMBER [1-7]\n" CRESET);
+			printf(RED "ERROR: " WHITE "Invalid conversion type (PLEASE ENTER A VALID CONV TYPE NUMBER [1-5]\n" CRESET);
 		}
 		else {
 			printf(RED "ERROR: " WHITE "Invalid conversion type\n" CRESET);
@@ -254,6 +254,25 @@ int check_input_rounding_mode() {
 			printf(RED "ERROR: " WHITE "Invalid rounding mode\n" CRESET);
 		}
 		error_cnt_round_mode++;
+		return FP_ERROR;
+	}
+	return FP_SUCCESS;
+}
+
+int check_input_int_width() {
+	static unsigned int error_cnt_int_width = 0;
+	if (integer_width < 2) {
+		if (error_cnt_int_width == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (error_cnt_int_width > 0) {
+			printf(RED "ERROR: " WHITE "Invalid integer width (PLEASE ENTER A VALID INTEGER WIDTH NUMBER [>0]\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Invalid integer width\n" CRESET);
+		}
+		error_cnt_int_width++;
 		return FP_ERROR;
 	}
 	return FP_SUCCESS;

@@ -16,6 +16,7 @@ extern int op_type;
 extern int choice_type;
 extern int conv_type;
 extern int round_mode;
+extern int integer_width;
 
 extern double upper_bound;
 extern double exp_range;
