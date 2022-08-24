@@ -28,6 +28,7 @@ int end;
 int conv_type;
 int round_mode;
 int integer_width;
+int64_t int_input;
 
 double upper_bound;
 double exp_range;
@@ -819,7 +820,7 @@ int main(unsigned int argc, char** argv) {
 			CONV_5_OPTION:
 			printf(      "\nCHOOSE OPTION:\n"
 						 "	(1)  SINGLE CONVERSION\n"
-						 "	(2)  ALL POSSIBLE CONVERSIONS FOR A SPECIFIED LENGTH\n"
+						 "	(2)  ALL POSSIBLE CONVERSIONS FOR A SPECIFIED LENGTH INTEGERS\n"
 						 "\nOPTION: "
 						);
 			scanf("%d", &choice_type);
@@ -831,13 +832,15 @@ int main(unsigned int argc, char** argv) {
 
 			if ( conv_type == 4 ) {
 				if ( choice_type == 1 ){
-					printf("\nINSERT INTEGER: ");
-					int64_t int_input;
+
+					printf("\nINSERT INTEGER: ");					
 					scanf("%ld", &int_input);
 					f1.float_i = int_input;
 					exact = float_to_hex(f1, &myfloat_h, &f1_out);
 					printf(CYAN "\t%ld = (0x%lx)\n" CRESET, int_input, myfloat_h);
+
 				} else if ( choice_type == 2 ){
+
 					INT_OPTION_2:
 					printf("\nINSERT INTEGER WIDTH: ");
 					scanf("%d", &integer_width);
@@ -853,14 +856,21 @@ int main(unsigned int argc, char** argv) {
 						printf(CYAN "%ld = (0x%lx)\n" CRESET, i, myfloat_h);
 					}
 				}
+				
 			} else if ( conv_type == 5 ) {
 				if ( choice_type == 1 ){
-					printf("\nINSERT INTEGER: ");
-					uint64_t uint_input;
-					scanf("%lu", &uint_input);
-					f1.float_i = uint_input;
+					UINT_SEL:
+					printf("\nINSERT UNSIGNED INTEGER: ");
+					scanf("%ld", &int_input);
+
+					int valid_uint = check_input_valid_uint();
+					if (valid_uint == FP_ERROR) {
+						goto UINT_SEL;		
+					}
+
+					f1.float_i = int_input;
 					exact = float_to_hex(f1, &myfloat_h, &f1_out);
-					printf(CYAN "\t%lu = (0x%lx)\n" CRESET, uint_input, myfloat_h);
+					printf(CYAN "\t%ld = (0x%lx)\n" CRESET, int_input, myfloat_h);
 					
 				} else if ( choice_type == 2 ) {
 					INT_OPTION_3:

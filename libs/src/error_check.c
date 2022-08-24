@@ -277,3 +277,22 @@ int check_input_int_width() {
 	}
 	return FP_SUCCESS;
 }
+
+int check_input_valid_uint() {
+	static unsigned int error_cnt_valid_uint = 0;
+	if (int_input < 0) {
+		if (error_cnt_valid_uint == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (error_cnt_valid_uint > 0) {
+			printf(RED "ERROR: " WHITE "Invalid unsigned integer (PLEASE ENTER A VALID UNSIGNED INTEGER [>=0]\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Invalid unsigned integer\n" CRESET);
+		}
+		error_cnt_valid_uint++;
+		return FP_ERROR;
+	}
+	return FP_SUCCESS;
+}
