@@ -21,6 +21,8 @@ extern int64_t int_input;
 
 extern char file_print;
 
+extern char file_print;
+
 extern double upper_bound;
 extern double exp_range;
 extern double mnt_range;

@@ -31,6 +31,8 @@ int64_t int_input;
 
 char file_print = 'Y';
 
+char file_print = 'Y';
+
 double upper_bound;
 double exp_range;
 double mnt_range;

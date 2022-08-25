@@ -259,6 +259,7 @@ int check_input_rounding_mode() {
 	return FP_SUCCESS;
 }
 
+
 int check_input_print_answer() {
 	static unsigned int error_cnt_print_answer = 0;
 	if (!(file_print == 'y' || file_print == 'Y' || file_print == 'n' || file_print == 'N')) {
