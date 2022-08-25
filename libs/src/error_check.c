@@ -223,13 +223,13 @@ int check_input_choice_type() {
 
 int check_input_conv_type() {
 	static unsigned int error_cnt_conv_type = 0;
-	if (conv_type < 1 || conv_type > 7) {
+	if (conv_type < 1 || conv_type > 5) {
 		if (error_cnt_conv_type == 10) {
 			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
 			exit(-1);
 		}		
 		if (error_cnt_conv_type > 0) {
-			printf(RED "ERROR: " WHITE "Invalid conversion type (PLEASE ENTER A VALID CONV TYPE NUMBER [1-7]\n" CRESET);
+			printf(RED "ERROR: " WHITE "Invalid conversion type (PLEASE ENTER A VALID CONV TYPE NUMBER [1-5]\n" CRESET);
 		}
 		else {
 			printf(RED "ERROR: " WHITE "Invalid conversion type\n" CRESET);
@@ -259,7 +259,6 @@ int check_input_rounding_mode() {
 	return FP_SUCCESS;
 }
 
-
 int check_input_print_answer() {
 	static unsigned int error_cnt_print_answer = 0;
 	if (!(file_print == 'y' || file_print == 'Y' || file_print == 'n' || file_print == 'N')) {
@@ -274,6 +273,44 @@ int check_input_print_answer() {
 			printf(RED "ERROR: " WHITE "Unknown answer\n" CRESET);
 		}
 		error_cnt_print_answer++;
+		return FP_ERROR;
+	}
+	return FP_SUCCESS;
+}
+
+int check_input_int_width() {
+	static unsigned int error_cnt_int_width = 0;
+	if (integer_width < 2) {
+		if (error_cnt_int_width == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (error_cnt_int_width > 0) {
+			printf(RED "ERROR: " WHITE "Invalid integer width (PLEASE ENTER A VALID INTEGER WIDTH NUMBER [>0]\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Invalid integer width\n" CRESET);
+		}
+		error_cnt_int_width++;
+		return FP_ERROR;
+	}
+	return FP_SUCCESS;
+}
+
+int check_input_valid_uint() {
+	static unsigned int error_cnt_valid_uint = 0;
+	if (int_input < 0) {
+		if (error_cnt_valid_uint == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (error_cnt_valid_uint > 0) {
+			printf(RED "ERROR: " WHITE "Invalid unsigned integer (PLEASE ENTER A VALID UNSIGNED INTEGER [>=0]\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Invalid unsigned integer\n" CRESET);
+		}
+		error_cnt_valid_uint++;
 		return FP_ERROR;
 	}
 	return FP_SUCCESS;

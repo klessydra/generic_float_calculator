@@ -27,6 +27,7 @@ int choice_type;
 int conv_type;
 int round_mode;
 int integer_width;
+int64_t int_input;
 
 char file_print = 'Y';
 
@@ -696,12 +697,10 @@ int main(unsigned int argc, char** argv) {
 	  SET_CONV_TYPE:
 		printf("\nINSERT CONVERSION TYPE:\n"
 					 "	(1) FLOAT_%d_1 to FLOAT_%d_2\n"
-					 "	(2) WIDENING\n"
-					 "	(3) NARROWING\n"
-					 "	(4) FLOAT_%d to INT\n"
-					 "	(5) FLOAT_%d to UINT\n"
-					 "	(6) INT to FLOAT_%d\n"
-					 "	(7) UINT to FLOAT_%d\n"
+					 "	(2) FLOAT_%d to INT\n"
+					 "	(3) FLOAT_%d to UINT\n"
+					 "	(4) INT to FLOAT_%d\n"
+					 "	(5) UINT to FLOAT_%d\n"
 					 "\nCONV TYPE: ",
 						float_size, float_size, float_size, float_size , float_size, float_size
 					);
@@ -788,11 +787,297 @@ int main(unsigned int argc, char** argv) {
 			}
 		}
 
-		if (conv_type == 4 || conv_type == 5) {
+		if (conv_type == 2 || conv_type == 3 ) {
+			INT_OPTION:
 			printf("\n\nINSERT INTEGER WIDTH: ");
 			scanf("%d", &integer_width);
+
+			int valid_int_width = check_input_int_width();
+			if (valid_int_width == FP_ERROR) {
+				goto INT_OPTION;		
+			}
+
+		CONV_2_OPTION:
+			printf(      "\nCHOOSE OPTION:\n"
+						 "	(1)  SINGLE CONVERSION\n"
+						 "	(2)  ALL POSSIBLE CONVERSIONS\n"
+						 "\nOPTION: "
+						);
+			scanf("%d", &choice_type);
+	
+			int valid_choice_type = check_input_choice_type();
+			if (valid_choice_type == FP_ERROR) {
+				goto CONV_2_OPTION;		
+			}
+
+			if (conv_type == 2 ) {
+				if (choice_type == 1) {
+					printf(GREEN "\nInsert float 1 in hex: \n" CRESET);
+					scanf("%lx", &f1.int_i);
+
+					if ( is_NaN_inf ( f1 ) ) {														//check for NaN and inf
+						printf(CYAN "\t(0x%lx) = Invalid input\n\n" CRESET, f1.int_i);
+						return 0;
+					}											
+					hex_to_float(f1, &f1_out);
+					int64_t f1_int = f1_out;
+					double rem = f1_out - f1_int;
+
+					if ( f1_out > pow(2, integer_width) - 1 ) {
+						printf("\nOverflow\n");
+						f1_int = pow(2, integer_width) - 1;
+						goto PRINT_3;
+					}
+
+					switch (round_mode) { 
+						case 1:                                                                     //round near ties even
+							if (rem > 0.5 || ( rem == 0.5 && (f1_int % 2 == 1)) ) {
+								f1_int++;
+							}
+							if (rem < -0.5 || ( rem == -0.5 && ( (-f1_int) % 2 == 1)) ) {
+								f1_int--;
+							}
+							break;
+						case 2:                                                                     //round toward zero
+							break;
+						case 3:                                                                    //round down
+							if ( rem < 0.0) f1_int--;
+							break;
+						case 4:                                                                    //round up
+							if ( rem > 0.0) f1_int++;
+							break;
+						case 5:                                                                    //round near ties up
+							if (rem >= 0.5 ) {
+								f1_int++;
+							} else if (rem <= -0.5) {
+								f1_int--;
+							}
+							break;
+					}
+					PRINT_3:
+						printf(CYAN "\t(0x%lx) = %ld\n\n" CRESET, f1.int_i, f1_int);
+				/*****************************************************************************/
+				} else if (choice_type == 2) {
+					for (int i=0; i<number_of_floats; i++){
+						f1.int_i = i;
+
+						if ( is_NaN_inf ( f1 ) ) {														//check for NaN and inf
+							printf(CYAN "(0x%lx) = Invalid input\n" CRESET, f1.int_i);
+							continue;
+						}
+						hex_to_float(f1, &f1_out);
+						int64_t f1_int = f1_out;
+						double rem = f1_out - f1_int;
+	
+
+						if ( f1_out > pow(2, integer_width) - 1 ) {
+							f1_int = pow(2, integer_width) - 1;
+							goto PRINT_4;
+						}
+	
+						switch (round_mode) { 
+						case 1:                                                                     //round near ties even
+							if (rem > 0.5 || ( rem == 0.5 && (f1_int % 2 == 1)) ) {
+								f1_int++;
+							}
+							if (rem < -0.5 || ( rem == -0.5 && ( (-f1_int) % 2 == 1)) ) {
+								f1_int--;
+							}
+							break;
+						case 2:                                                                     //round toward zero
+							break;
+						case 3:                                                                    //round down
+							if ( rem < 0.0) f1_int--;
+							break;
+						case 4:                                                                    //round up
+							if ( rem > 0.0) f1_int++;
+							break;
+						case 5:                                                                    //round near ties up
+							if (rem >= 0.5 ) {
+								f1_int++;
+							} else if (rem <= -0.5) {
+								f1_int--;
+							}
+							break;
+					}
+						PRINT_4:
+							printf(CYAN "(0x%lx) = %ld\n" CRESET, f1.int_i, f1_int);
+					}
+				}
+			}
+
+			if ( conv_type == 3 ) {
+
+				if (choice_type == 1) {
+					printf(GREEN "\nInsert float 1 in hex: \n" CRESET);
+					scanf("%lx", &f1.int_i);
+					uint sign = f1.int_i >> ( float_size - 1 );
+
+					if ( is_NaN_inf ( f1 ) ) {														//check for NaN and inf
+						printf(CYAN "\t(0x%lx) = Invalid input\n\n" CRESET, f1.int_i);
+						return 0;
+					}											
+					hex_to_float(f1, &f1_out);
+					uint64_t f1_uint = f1_out;
+					double rem = f1_out - f1_uint;
+
+					if (sign == 1) {
+							f1_uint = 0;
+							goto PRINT_1;
+						}	
+
+					if ( f1_out > pow(2, integer_width) - 1 ) {
+						printf("\nOverflow\n");
+						f1_uint = pow(2, integer_width) - 1;
+						goto PRINT_1;
+					}
+
+					switch (round_mode) {
+						case 1:                                                                     //round near ties even
+							if (rem > 0.5 || ( rem == 0.5 && (f1_uint % 2 == 1)) ) {
+								f1_uint++;
+							}
+							break;
+						case 2:                                                                     //round toward zero
+							break;
+						case 3:                                                                    //round down
+							break;
+						case 4:                                                                    //round up
+							if ( rem != 0.0) f1_uint++;
+							break;
+						case 5:                                                                    //round near ties up
+							if (rem >= 0.5 ) {
+								f1_uint++;
+							}
+							break;
+					}
+					PRINT_1:
+						printf(CYAN "\t(0x%lx) = %lu\n\n" CRESET, f1.int_i, f1_uint);
+				/*****************************************************************************/
+				} else if (choice_type == 2) {
+					for (int i=0; i<number_of_floats; i++){
+						f1.int_i = i;
+						uint sign = f1.int_i >> ( float_size - 1 );
+
+						if ( is_NaN_inf ( f1 ) ) {														//check for NaN and inf
+							printf(CYAN "(0x%lx) = Invalid input\n" CRESET, f1.int_i);
+							continue;
+						}
+						hex_to_float(f1, &f1_out);
+						uint64_t f1_uint = f1_out;
+						double rem = f1_out - f1_uint;
+	
+						if (sign == 1) {
+							f1_uint = 0;
+							goto PRINT_2;
+						}	
+
+						if ( f1_out > pow(2, integer_width) - 1 ) {
+							f1_uint = pow(2, integer_width) - 1;
+							goto PRINT_2;
+						}
+	
+						switch (round_mode) {
+							case 1:                                                                     //round near ties even
+								if (rem > 0.5 || ( rem == 0.5 && (f1_uint % 2 == 1)) ) {
+									f1_uint++;
+								}
+								break;
+							case 2:                                                                     //round toward zero
+								break;
+							case 3:                                                                    //round down
+								break;
+							case 4:                                                                    //round up
+								if ( rem != 0.0) f1_uint++;
+								break;
+							case 5:                                                                    //round near ties up
+								if (rem >= 0.5 ) {
+									f1_uint++;
+								}
+								break;
+						}
+						PRINT_2:
+							printf(CYAN "(0x%lx) = %lu\n" CRESET, f1.int_i, f1_uint);
+					}
+				}
+			}
 		}
-		
+	
+		if (conv_type == 4 || conv_type == 5 ) {
+
+			CONV_5_OPTION:
+			printf(      "\nCHOOSE OPTION:\n"
+						 "	(1)  SINGLE CONVERSION\n"
+						 "	(2)  ALL POSSIBLE CONVERSIONS FOR A SPECIFIED LENGTH INTEGERS\n"
+						 "\nOPTION: "
+						);
+			scanf("%d", &choice_type);
+	
+			int valid_choice_type = check_input_choice_type();
+			if (valid_choice_type == FP_ERROR) {
+				goto CONV_5_OPTION;		
+			}
+
+			if ( conv_type == 4 ) {
+				if ( choice_type == 1 ){
+
+					printf("\nINSERT INTEGER: ");					
+					scanf("%ld", &int_input);
+					f1.float_i = int_input;
+					exact = float_to_hex(f1, &myfloat_h, &f1_out);
+					printf(CYAN "\t%ld = (0x%lx)\n" CRESET, int_input, myfloat_h);
+
+				} else if ( choice_type == 2 ){
+
+					INT_OPTION_2:
+					printf("\nINSERT INTEGER WIDTH: ");
+					scanf("%d", &integer_width);
+
+					int valid_int_width = check_input_int_width();
+					if (valid_int_width == FP_ERROR) {
+						goto INT_OPTION_2;		
+					}
+
+					for (int64_t i = ( - pow( 2, integer_width - 1 ) ) ; i < pow( 2,integer_width - 1 ) ; i++){
+						f1.float_i = i;
+						exact = float_to_hex(f1, &myfloat_h, &f1_out);
+						printf(CYAN "%ld = (0x%lx)\n" CRESET, i, myfloat_h);
+					}
+				}
+				
+			} else if ( conv_type == 5 ) {
+				if ( choice_type == 1 ){
+					UINT_SEL:
+					printf("\nINSERT UNSIGNED INTEGER: ");
+					scanf("%ld", &int_input);
+
+					int valid_uint = check_input_valid_uint();
+					if (valid_uint == FP_ERROR) {
+						goto UINT_SEL;		
+					}
+
+					f1.float_i = int_input;
+					exact = float_to_hex(f1, &myfloat_h, &f1_out);
+					printf(CYAN "\t%ld = (0x%lx)\n" CRESET, int_input, myfloat_h);
+					
+				} else if ( choice_type == 2 ) {
+					INT_OPTION_3:
+					printf("\nINSERT INTEGER WIDTH: ");
+					scanf("%d", &integer_width);
+
+					int valid_int_width = check_input_int_width();
+					if (valid_int_width == FP_ERROR) {
+						goto INT_OPTION_3;		
+					}
+
+					for (uint64_t i = 0 ; i < pow( 2,integer_width ) ; i++){
+						f1.float_i = i;
+						exact = float_to_hex(f1, &myfloat_h, &f1_out);
+						printf(CYAN "%lu = (0x%lx)\n" CRESET, i, myfloat_h);
+					}
+				}
+			}
+		}
 	}
 
 	if (op_type == 9) {

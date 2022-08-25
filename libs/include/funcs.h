@@ -19,4 +19,8 @@ int check_input_choice_type();
 int check_input_conv_type();
 int check_input_rounding_mode();
 int check_input_print_answer();
+int check_input_int_width();
+int check_input_valid_uint();
+
+int is_NaN_inf (number f);
 

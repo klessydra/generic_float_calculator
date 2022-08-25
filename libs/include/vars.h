@@ -16,6 +16,8 @@ extern int op_type;
 extern int choice_type;
 extern int conv_type;
 extern int round_mode;
+extern int integer_width;
+extern int64_t int_input;
 
 extern char file_print;
 
