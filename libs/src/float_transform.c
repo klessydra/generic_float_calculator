@@ -78,14 +78,15 @@ int float_to_hex(number f, uint64_t* myfloat_h, double* f_out) {
 	double   normalized   = 0;
 	double mantissa_rounded_f;
 	uint64_t sign_extract = (f.int_i >> 63) & lsb_en;
-	double exponent_lower  = 0.0;
-	double exponent_upper  = pow(2,-(bias+mantissa_size-1));
+	double exponent_lower  = pow(2,-(bias+mantissa_size-1));
+	double exponent_upper  = pow(2,-(bias+mantissa_size));
 	double mantissa_lookup = 0.0;
 	double mantissa_lower;
 	double mantissa_upper;
 	double mantissa_middle;
 	double mantissa;
 	int exact = 0;
+	int underflow = 0; 
 	double absolute_float = fabs(f.float_i);
 	if (isnan(f.float_i)) {
 		// Generate a qnan (Quiet NaN)
@@ -104,8 +105,13 @@ int float_to_hex(number f, uint64_t* myfloat_h, double* f_out) {
 		//printf(CYAN "HERE2\n");
 	}
 	else {
+		if (absolute_float >= 0 && absolute_float < exponent_lower) {
+			underflow = 1;
+		}
 		for (int i=-(bias+mantissa_size-1); i<=bias; i++) {
-			if (absolute_float >= exponent_lower && absolute_float < exponent_upper) {
+			exponent_lower = pow(2,i);
+			exponent_upper = pow(2,i+1);
+			if ((absolute_float >= exponent_lower && absolute_float < exponent_upper) || underflow == 1) {
 				//printf(CYAN "EXPONENT: %d\n", i);
 				if (i < -(bias-1)) {  // denormalized exponent
 					exponent_extract = 0;
@@ -145,9 +151,8 @@ int float_to_hex(number f, uint64_t* myfloat_h, double* f_out) {
 				//printf(CYAN "mnt_rounded= %lx\n", mantissa_rounded);
 				//printf(CYAN "mantissa_size= %d\n", mantissa_size);
 				*myfloat_h = (sign_extract << float_size-1) + ((exponent_rounded & exponent_en) << mantissa_size) + (mantissa_rounded & mantissa_en);
+				break;
 			}
-			exponent_lower = pow(2,i);
-			exponent_upper = pow(2,i+1);
 		}
 	}
 	if (exponent_rounded == 1) {
@@ -189,14 +194,15 @@ int float_to_hex_2(number f, uint64_t* myfloat_h, double* f_out) {
 	double   normalized   = 0;
 	double mantissa_rounded_f;
 	uint64_t sign_extract = (f.int_i >> 63) & lsb_en;
-	double exponent_lower  = 0.0;
-	double exponent_upper  = pow(2,-(bias_2+mantissa_size_2-1));
+	double exponent_lower  = pow(2,-(bias+mantissa_size-1));
+	double exponent_upper  = pow(2,-(bias+mantissa_size));
 	double mantissa_lookup = 0.0;
 	double mantissa_lower;
 	double mantissa_upper;
 	double mantissa_middle;
 	double mantissa;
 	int exact = 0;
+	int underflow = 0; 
 	double absolute_float = fabs(f.float_i);
 	if (isnan(f.float_i)) {
 		// Generate a qnan (Quiet NaN)
@@ -215,8 +221,13 @@ int float_to_hex_2(number f, uint64_t* myfloat_h, double* f_out) {
 		//printf(CYAN "HERE2\n");
 	}
 	else {
+		if (absolute_float >= 0 && absolute_float < exponent_lower) {
+			underflow = 1;
+		}
 		for (int i=-(bias_2+mantissa_size_2-1); i<=bias_2; i++) {
-			if (absolute_float >= exponent_lower && absolute_float < exponent_upper) {
+			exponent_lower = pow(2,i);
+			exponent_upper = pow(2,i+1);
+			if ((absolute_float >= exponent_lower && absolute_float < exponent_upper) || underflow == 1) {
 				//printf(CYAN "EXPONENT: %d\n", i);
 				if (i < -(bias_2-1)) {  // denormalized exponent
 					exponent_extract = 0;
@@ -256,9 +267,8 @@ int float_to_hex_2(number f, uint64_t* myfloat_h, double* f_out) {
 				//printf(CYAN "mnt_rounded= %lx\n", mantissa_rounded);
 				//printf(CYAN "mantissa_size= %d\n", mantissa_size);
 				*myfloat_h = (sign_extract << float_size_2-1) + ((exponent_rounded & exponent_en) << mantissa_size_2) + (mantissa_rounded & mantissa_en);
+				break;
 			}
-			exponent_lower = pow(2,i);
-			exponent_upper = pow(2,i+1);
 		}
 	}
 	if (exponent_rounded == 1) {
