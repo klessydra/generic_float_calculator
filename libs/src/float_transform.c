@@ -189,6 +189,8 @@ int float_to_hex_2(number f, uint64_t* myfloat_h, double* f_out) {
 	double   normalized   = 0;
 	double mantissa_rounded_f;
 	uint64_t sign_extract = (f.int_i >> 63) & lsb_en;
+	double exponent_lower  = 0.0;
+	double exponent_upper  = pow(2,-(bias_2+mantissa_size_2-1));
 	double mantissa_lookup = 0.0;
 	double mantissa_lower;
 	double mantissa_upper;
@@ -214,7 +216,7 @@ int float_to_hex_2(number f, uint64_t* myfloat_h, double* f_out) {
 	}
 	else {
 		for (int i=-(bias_2+mantissa_size_2-1); i<=bias_2; i++) {
-			if (absolute_float >= pow(2,i) && absolute_float < pow(2,i+1)) {
+			if (absolute_float >= exponent_lower && absolute_float < exponent_upper) {
 				//printf(CYAN "EXPONENT: %d\n", i);
 				if (i < -(bias_2-1)) {  // denormalized exponent
 					exponent_extract = 0;
@@ -255,6 +257,8 @@ int float_to_hex_2(number f, uint64_t* myfloat_h, double* f_out) {
 				//printf(CYAN "mantissa_size= %d\n", mantissa_size);
 				*myfloat_h = (sign_extract << float_size_2-1) + ((exponent_rounded & exponent_en) << mantissa_size_2) + (mantissa_rounded & mantissa_en);
 			}
+			exponent_lower = pow(2,i);
+			exponent_upper = pow(2,i+1);
 		}
 	}
 	if (exponent_rounded == 1) {
