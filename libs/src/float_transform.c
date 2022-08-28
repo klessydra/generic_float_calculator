@@ -194,8 +194,8 @@ int float_to_hex_2(number f, uint64_t* myfloat_h, double* f_out) {
 	double   normalized   = 0;
 	double mantissa_rounded_f;
 	uint64_t sign_extract = (f.int_i >> 63) & lsb_en;
-	double exponent_lower  = pow(2,-(bias+mantissa_size-1));
-	double exponent_upper  = pow(2,-(bias+mantissa_size));
+	double exponent_lower  = pow(2,-(bias_2+mantissa_size_2-1));
+	double exponent_upper  = pow(2,-(bias_2+mantissa_size_2));
 	double mantissa_lookup = 0.0;
 	double mantissa_lower;
 	double mantissa_upper;
