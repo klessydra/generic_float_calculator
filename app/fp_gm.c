@@ -835,9 +835,17 @@ int main(unsigned int argc, char** argv) {
 					int64_t f1_int = f1_out;
 					double rem = f1_out - f1_int;
 
-					if ( f1_out > pow(2, integer_width) - 1 ) {
+					if ( f1_out > pow(2, integer_width-1) - 1 ) {
 						printf("\nOverflow\n");
-						f1_int = pow(2, integer_width) - 1;
+						f1_int = pow(2, integer_width-1) - 1;
+						rem = 0;
+						goto PRINT_3;
+					}
+
+					if ( f1_out < -pow(2, integer_width-1) ) {
+						printf("\nUnderflow\n");
+						f1_int = -pow(2, integer_width-1);
+						rem = 0;
 						goto PRINT_3;
 					}
 
@@ -882,8 +890,15 @@ int main(unsigned int argc, char** argv) {
 						double rem = f1_out - f1_int;
 	
 
-						if ( f1_out > pow(2, integer_width) - 1 ) {
-							f1_int = pow(2, integer_width) - 1;
+						if ( f1_out > pow(2, integer_width-1) - 1 ) {
+							f1_int = pow(2, integer_width-1) - 1;
+							rem = 0;
+							goto PRINT_4;
+						}
+
+						if ( f1_out < -pow(2, integer_width-1) ) {
+							f1_int = -pow(2, integer_width-1);
+							rem = 0;
 							goto PRINT_4;
 						}
 	
@@ -941,6 +956,7 @@ int main(unsigned int argc, char** argv) {
 					if ( f1_out > pow(2, integer_width) - 1 ) {
 						printf("\nOverflow\n");
 						f1_uint = pow(2, integer_width) - 1;
+						rem = 0;
 						goto PRINT_1;
 					}
 
@@ -986,6 +1002,7 @@ int main(unsigned int argc, char** argv) {
 
 						if ( f1_out > pow(2, integer_width) - 1 ) {
 							f1_uint = pow(2, integer_width) - 1;
+							rem = 0;
 							goto PRINT_2;
 						}
 	
