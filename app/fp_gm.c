@@ -329,8 +329,8 @@ int main(unsigned int argc, char** argv) {
 	}
 
 	if (op_type == 0) {
-		fprintf(out2_result, "%s\nFLOAT_%d (1-%d-%d)\n", green, float_size, exponent_size, mantissa_size);
-		fprintf(out2_result,  "%s\n\tOP_A\tSQRT\n", green);
+		fprintf(out1_result, "%s\nFLOAT_%d (1-%d-%d)\n", green, float_size, exponent_size, mantissa_size);
+		fprintf(out1_result,  "%s\n\tOP_A\tSQRT\n", green);
 		for (int i=0; i<number_of_floats; i++){
 				f1.int_i = i;
 				hex_to_float(f1, &f1_out);
@@ -342,6 +342,7 @@ int main(unsigned int argc, char** argv) {
 						creset
 					  );
 		}
+		fclose(out1_result);
 		fprintf(out2_result, "%s\nFLOAT_%d (1-%d-%d)\n", green, float_size, exponent_size, mantissa_size);
 		fprintf(out2_result,  "%s\n\tOP_A\tOP_B\tADD\tSUB\tMUL\tDIV\n", green);
 		for (int i=0; i<number_of_floats; i++){
@@ -369,8 +370,9 @@ int main(unsigned int argc, char** argv) {
 				//		f1.int_i, f1_out, f2.int_i, f2_out, mysum_h, fsum_out, mysub_h, fsub_out, mymul_h, fmul_out, mydiv_h, fdiv_out);
 			}
 		}
-		fprintf(out2_result, "%s\nFLOAT_%d (1-%d-%d)\n", green, float_size, exponent_size, mantissa_size);
-		fprintf(out2_result,  "%s\n\tOP_A\tOP_B\tOP_C\tFMA\n", green);
+		fclose(out2_result);
+		fprintf(out3_result, "%s\nFLOAT_%d (1-%d-%d)\n", green, float_size, exponent_size, mantissa_size);
+		fprintf(out3_result,  "%s\n\tOP_A\tOP_B\tOP_C\tFMA\n", green);
 		for (int i=0; i<number_of_floats; i++){
 			for (int j=0; j<number_of_floats; j++){
 				for (int k=0; k<number_of_floats; k++){
@@ -391,8 +393,6 @@ int main(unsigned int argc, char** argv) {
 				}
 			}
 		}
-		fclose(out1_result);
-		fclose(out2_result);
 		fclose(out3_result);
 	}
 
@@ -460,7 +460,7 @@ int main(unsigned int argc, char** argv) {
 
 	if (op_type == 3) {
 		printf(GREEN "\nSUBTRACTION\n");
-	SUBTRACTION_OPTION:
+		SUBTRACTION_OPTION:
 		printf(      "\nCHOOSE OPTION:\n"
 					 "	(1)  SINGLE SUBTRACTION\n"
 					 "	(2)  ALL POSSIBLE SUBTRACTIONS\n"
@@ -513,7 +513,7 @@ int main(unsigned int argc, char** argv) {
 
 	if (op_type == 4) {
 		printf(GREEN "\nMULTIPLICATION\n");
-	MULTIPLICATION_OPTION:
+		MULTIPLICATION_OPTION:
 		printf(      "\nCHOOSE OPTION:\n"
 					 "	(1)  SINGLE MULTIPLICATION\n"
 					 "	(2)  ALL POSSIBLE MULTIPLICATIONS\n"
@@ -559,14 +559,14 @@ int main(unsigned int argc, char** argv) {
 							float_size/4, mymul_h,
 							creset
 				  	 	 );
-				}	
+				}
 			}
 		}
 	}
 
 	if (op_type == 5) {
 		printf(GREEN "\nDIVISION\n");
-	DIVISION_OPTION:
+		DIVISION_OPTION:
 		printf(      "\nCHOOSE OPTION:\n"
 					 "	(1)  SINGLE DIVISION\n"
 					 "	(2)  ALL POSSIBLE DIVISIONS\n"
@@ -619,7 +619,7 @@ int main(unsigned int argc, char** argv) {
 
 	if (op_type == 6) {
 		printf(GREEN "\nSQUARE ROOT\n");
-	SQRT_OPTION:
+		SQRT_OPTION:
 		printf(      "\nCHOOSE OPTION:\n"
 					 "	(1)  SINGLE SQUARE ROOT\n"
 					 "	(2)  ALL POSSIBLE SQUARE ROOTS\n"
@@ -659,7 +659,7 @@ int main(unsigned int argc, char** argv) {
 
 	if (op_type == 7) {
 		printf(GREEN "\nFUSED MULTIPLY-ADD\n");
-	FMA_OPTION:
+		FMA_OPTION:
 		printf(      "\nCHOOSE OPTION:\n"
 					 "	(1)  SINGLE FUSED MULTIPLY-ADD\n"
 					 "	(2)  ALL POSSIBLE FUSED MULTIPLY-ADD\n"
