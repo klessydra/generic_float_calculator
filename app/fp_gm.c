@@ -168,13 +168,13 @@ int main(unsigned int argc, char** argv) {
 	if (op_type == 8) {
 	  SET_CONV_TYPE:
 		printf("\nINSERT CONVERSION TYPE:\n"
-					 "	(1) FLOAT_%d_1 to FLOAT_%d_2\n"
+					 "	(1) FLOAT_%d to FLOAT_" BLUE "?\n" CRESET
 					 "	(2) FLOAT_%d to INT\n"
 					 "	(3) FLOAT_%d to UINT\n"
 					 "	(4) INT to FLOAT_%d\n"
 					 "	(5) UINT to FLOAT_%d\n"
 					 "\nCONV TYPE: ",
-						float_size, float_size, float_size, float_size , float_size, float_size
+						float_size, float_size, float_size , float_size, float_size
 					);
 		scanf("%d", &conv_type);
 
