@@ -49,6 +49,8 @@ int exponent_set_2 = 0;
 int mantissa_set_2 = 0;
 int bias_set_2 = 0;
 
+int std_out = 0;
+
 FILE file1;
 FILE file2;
 FILE file3;
@@ -307,6 +309,7 @@ int main(unsigned int argc, char** argv) {
 		creset = "";
 	}
 	else {
+		std_out 		= 1;
 		out1_result     = stdout; 
 		out2_result     = stdout; 
 		out3_result     = stdout; 
@@ -342,7 +345,9 @@ int main(unsigned int argc, char** argv) {
 						creset
 					  );
 		}
-		fclose(out1_result);
+		if (std_out == 0) {
+			fclose(out1_result);
+		}
 		fprintf(out2_result, "%s\nFLOAT_%d (1-%d-%d)\n", green, float_size, exponent_size, mantissa_size);
 		fprintf(out2_result,  "%s\n\tOP_A\tOP_B\tADD\tSUB\tMUL\tDIV\n", green);
 		for (int i=0; i<number_of_floats; i++){
@@ -359,7 +364,7 @@ int main(unsigned int argc, char** argv) {
 				float_to_hex(fsub, &mysub_h, &fsub_out);
 				float_to_hex(fmul, &mymul_h, &fmul_out);
 				float_to_hex(fdiv, &mydiv_h, &fdiv_out);
-				fprintf(out2_result, "%s\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\n%s", 
+				fprintf(stdout, "%s\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\n%s", 
 						cyan,
 						float_size/4, f1.int_i, float_size/4, f2.int_i,
 						float_size/4, mysum_h,  float_size/4, mysub_h, 
@@ -370,7 +375,9 @@ int main(unsigned int argc, char** argv) {
 				//		f1.int_i, f1_out, f2.int_i, f2_out, mysum_h, fsum_out, mysub_h, fsub_out, mymul_h, fmul_out, mydiv_h, fdiv_out);
 			}
 		}
-		fclose(out2_result);
+		if (std_out == 0) {
+			fclose(out2_result);
+		}
 		fprintf(out3_result, "%s\nFLOAT_%d (1-%d-%d)\n", green, float_size, exponent_size, mantissa_size);
 		fprintf(out3_result,  "%s\n\tOP_A\tOP_B\tOP_C\tFMA\n", green);
 		for (int i=0; i<number_of_floats; i++){
@@ -393,7 +400,9 @@ int main(unsigned int argc, char** argv) {
 				}
 			}
 		}
-		fclose(out3_result);
+		if (std_out == 0) {
+			fclose(out3_result);
+		}
 	}
 
 	if (op_type == 1) {
