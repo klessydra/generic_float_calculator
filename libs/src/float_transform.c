@@ -194,8 +194,8 @@ int float_to_hex_2(number f, uint64_t* myfloat_h, double* f_out) {
 	double   normalized   = 0;
 	double mantissa_rounded_f;
 	uint64_t sign_extract = (f.int_i >> 63) & lsb_en;
-	double exponent_lower  = pow(2,-(bias_2+mantissa_size_2-1));
-	double exponent_upper  = pow(2,-(bias_2+mantissa_size_2));
+	double exponent_lower  = pow(2,-(bias_2+mantissa2_size-1));
+	double exponent_upper  = pow(2,-(bias_2+mantissa2_size));
 	double mantissa_lookup = 0.0;
 	double mantissa_lower;
 	double mantissa_upper;
@@ -206,25 +206,25 @@ int float_to_hex_2(number f, uint64_t* myfloat_h, double* f_out) {
 	double absolute_float = fabs(f.float_i);
 	if (isnan(f.float_i)) {
 		// Generate a qnan (Quiet NaN)
-		mantissa_rounded = pow(2,mantissa_size_2-1);
+		mantissa_rounded = pow(2,mantissa2_size-1);
 		exponent_rounded = exp_range_2-1; 
-		*myfloat_h = (sign_extract << float_size_2-1) + (exponent_rounded << mantissa_size_2) + mantissa_rounded;
+		*myfloat_h = (sign_extract << float2_size-1) + (exponent_rounded << mantissa2_size) + mantissa_rounded;
 	}
 	else if (absolute_float >= upper_bound_2) {
 		mantissa_rounded = 0;
 		exponent_rounded = exp_range_2-1; 
-		*myfloat_h = (sign_extract << float_size_2-1) + (exponent_rounded << mantissa_size_2) + mantissa_rounded;
+		*myfloat_h = (sign_extract << float2_size-1) + (exponent_rounded << mantissa2_size) + mantissa_rounded;
 		//printf(CYAN "HERE\n");
 	}
 	else if (absolute_float == 0) { // if input float is 0 
-		*myfloat_h = sign_extract << float_size_2-1;
+		*myfloat_h = sign_extract << float2_size-1;
 		//printf(CYAN "HERE2\n");
 	}
 	else {
 		if (absolute_float >= 0 && absolute_float < exponent_lower) {
 			underflow = 1;
 		}
-		for (int i=-(bias_2+mantissa_size_2-1); i<=bias_2; i++) {
+		for (int i=-(bias_2+mantissa2_size-1); i<=bias_2; i++) {
 			exponent_lower = pow(2,i);
 			exponent_upper = pow(2,i+1);
 			if ((absolute_float >= exponent_lower && absolute_float < exponent_upper) || underflow == 1) {
@@ -266,7 +266,7 @@ int float_to_hex_2(number f, uint64_t* myfloat_h, double* f_out) {
 				//printf(CYAN "exp_rounded= %ld\n", exponent_rounded);
 				//printf(CYAN "mnt_rounded= %lx\n", mantissa_rounded);
 				//printf(CYAN "mantissa_size= %d\n", mantissa_size);
-				*myfloat_h = (sign_extract << float_size_2-1) + ((exponent_rounded & exponent_en) << mantissa_size_2) + (mantissa_rounded & mantissa_en);
+				*myfloat_h = (sign_extract << float2_size-1) + ((exponent_rounded & exponent_en) << mantissa2_size) + (mantissa_rounded & mantissa_en);
 				break;
 			}
 		}
@@ -279,8 +279,8 @@ int float_to_hex_2(number f, uint64_t* myfloat_h, double* f_out) {
 		mantissa_rounded_f = 0;
 	else
 		mantissa_rounded_f = 1;
-	for (int i=1; i<=mantissa_size_2; i++) {
-		mantissa_rounded_f += (double)((mantissa_rounded >> (mantissa_size_2-i)) & lsb_en) * (1 / pow(2, i));
+	for (int i=1; i<=mantissa2_size; i++) {
+		mantissa_rounded_f += (double)((mantissa_rounded >> (mantissa2_size-i)) & lsb_en) * (1 / pow(2, i));
 	}
 	//printf(CYAN "mnt_rounded_f = %lf\n" CRESET, mantissa_rounded_f);
 	if (sign_extract == 1) {

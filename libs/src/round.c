@@ -9,6 +9,20 @@
 void round_fp(uint64_t mantissa_extract, uint64_t sign_extract, double mantissa, double mantissa_middle, double mantissa_lower, double mantissa_upper, uint64_t* mantissa_rounded, uint64_t* exponent_rounded) {
 	const uint64_t lsb_en = 1;
 	uint64_t nearest_even_shift;
+
+	if (mantissa == mantissa_middle) {
+		percision = 1;
+		inexact   = 0;
+	}
+	else if (mantissa == mantissa_upper || mantissa == mantissa_lower) {
+		percision = 0;
+		inexact   = 0;
+	}
+	else {
+		percision = 0;
+		inexact   = 1;
+	}
+
 	if ((mantissa_extract + 1) & lsb_en == 1) {  
 		nearest_even_shift = -1;
 	}

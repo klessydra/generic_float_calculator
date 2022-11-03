@@ -28,7 +28,7 @@ int check_input_float() {
 
 int check_input_float_2() {
 	static unsigned int error_cnt_float_size = 0;
-	if (float_size_2 < 4) { // 3-bit custom floats and smaller aren't allowed
+	if (float2_size < 4) { // 3-bit custom floats and smaller aren't allowed
 		if (error_cnt_float_size == 10) {
 			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
 			exit(-1);
@@ -68,7 +68,7 @@ int check_input_exponent() {
 
 int check_input_exponent_2() {
 	static unsigned int error_cnt_exponent_size = 0;
-	if (exponent_size_2 < 2 || exponent_size_2 > float_size_2-2) {
+	if (exponent2_size < 2 || exponent2_size > float2_size-2) {
 		if (error_cnt_exponent_size == 10) {
 			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
 			exit(-1);
@@ -108,7 +108,7 @@ int check_input_mantissa() {
 
 int check_input_mantissa_2() {
 	static unsigned int error_cnt_mantissa_size = 0;
-	if (mantissa_size_2 <= 0 || exponent_size_2 + mantissa_size_2 != float_size_2-1) {
+	if (mantissa2_size <= 0 || exponent2_size + mantissa2_size != float2_size-1) {
 		if (error_cnt_mantissa_size == 10) {
 			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
 			exit(-1);
@@ -161,8 +161,8 @@ int check_input_bias_2() {
     	scanf("%d", &bias_2);
     }
     else if (custom_bias_2 == 'n' || custom_bias_2 == 'N') {
-    	printf(BLUE "Defaulting bias to 2^(%d)-1 = " CRESET "%d\n", exponent_size_2-1, (int)pow(2,exponent_size_2-1)-1);
-    	bias_2 = (int)pow(2,exponent_size_2-1)-1;
+    	printf(BLUE "Defaulting bias to 2^(%d)-1 = " CRESET "%d\n", exponent2_size-1, (int)pow(2,exponent2_size-1)-1);
+    	bias_2 = (int)pow(2,exponent2_size-1)-1;
 	}
 	else {
 		bias_2 = '0';
