@@ -12,7 +12,7 @@ fi
 
 if [ ! -e "../result" ]
 then
-	mkdir result
+	mkdir ../result
 fi
 
 gcc -std=c99 -g -I ../libs/include -c ../libs/src/error_check.c ../libs/src/float_transform.c ../libs/src/round.c ../libs/src/parser.c ../libs/src/auxiliary.c
