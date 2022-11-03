@@ -9,6 +9,8 @@
 #include "defs.h" 
 #include "funcs.h"
 
+typedef unsigned int uint;
+
 int float_size    = 0;
 int exponent_size = 0;
 int mantissa_size = 0;
