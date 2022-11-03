@@ -4,9 +4,9 @@ extern int exponent_size;
 extern int mantissa_size;
 extern int bias;
 
-extern int float_size_2;
-extern int exponent_size_2;
-extern int mantissa_size_2;
+extern int float2_size;
+extern int exponent2_size;
+extern int mantissa2_size;
 extern int bias_2;
 
 extern char custom_bias;
@@ -35,8 +35,19 @@ extern int float_set;
 extern int exponent_set;
 extern int mantissa_set;
 extern int bias_set;
+extern int op_set;
+extern int cop_set;
+extern int round_mode_set;
+extern int float2_set;
+extern int exponent2_set;
+extern int mantissa2_set;
+extern int bias2_set;
+extern int file_out_set;
 
 extern int float_set_2;
 extern int exponent_set_2;
 extern int mantissa_set_2;
 extern int bias_set_2;
+
+extern uint8_t percision;
+extern uint8_t inexact;

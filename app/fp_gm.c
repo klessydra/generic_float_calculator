@@ -14,10 +14,10 @@ int exponent_size = 0;
 int mantissa_size = 0;
 int bias          = 0;
 
-int float_size_2    = 0;
-int exponent_size_2 = 0;
-int mantissa_size_2 = 0;
-int bias_2          = 0;
+int float2_size    = 0;
+int exponent2_size = 0;
+int mantissa2_size = 0;
+int bias_2         = 0;
 
 char custom_bias;
 char custom_bias_2;
@@ -43,11 +43,17 @@ int float_set = 0;
 int exponent_set = 0;
 int mantissa_set = 0;
 int bias_set = 0;
+int op_set = 0;
+int cop_set = 0;
+int round_mode_set = 0;
+int float2_set = 0;
+int exponent2_set = 0;
+int mantissa2_set = 0;
+int bias2_set = 0;
+int file_out_set = 0;
 
-int float_set_2 = 0;
-int exponent_set_2 = 0;
-int mantissa_set_2 = 0;
-int bias_set_2 = 0;
+uint8_t percision = 0;
+uint8_t inexact	  = 0;
 
 int std_out = 0;
 
@@ -61,17 +67,28 @@ FILE file_mul;
 FILE file_div;
 FILE file_sqrt;
 FILE file_fma;
+FILE file_conv_f_f;
+FILE file_conv_f_i;
+FILE file_conv_f_u;
+FILE file_conv_i_f;
+FILE file_conv_u_f;
 
-FILE* file1_ptr     = &file1;
-FILE* file2_ptr     = &file2;
-FILE* file3_ptr     = &file3;
-FILE* file_num_ptr  = &file_num;
-FILE* file_add_ptr  = &file_add;
-FILE* file_sub_ptr  = &file_sub;
-FILE* file_mul_ptr  = &file_mul;
-FILE* file_div_ptr  = &file_div;
-FILE* file_sqrt_ptr = &file_sqrt;
-FILE* file_fma_ptr  = &file_fma;
+FILE* file1_ptr     		= &file1;
+FILE* file2_ptr     		= &file2;
+FILE* file3_ptr     		= &file3;
+FILE* file_num_ptr  		= &file_num;
+FILE* file_add_ptr  		= &file_add;
+FILE* file_sub_ptr  		= &file_sub;
+FILE* file_mul_ptr  		= &file_mul;
+FILE* file_div_ptr  		= &file_div;
+FILE* file_sqrt_ptr 		= &file_sqrt;
+FILE* file_fma_ptr  		= &file_fma;
+FILE* file_conv_f_f_ptr 	= &file_conv_f_f;
+FILE* file_conv_f_i_ptr 	= &file_conv_f_i;
+FILE* file_conv_f_u_ptr 	= &file_conv_f_u;
+FILE* file_conv_i_f_ptr 	= &file_conv_i_f;
+FILE* file_conv_u_f_ptr 	= &file_conv_u_f;
+
 
 int main(unsigned int argc, char** argv) {
 
@@ -211,26 +228,36 @@ int main(unsigned int argc, char** argv) {
 		goto PRINT_RES;		
 	}
 
-	char* filename1     = malloc(200*sizeof(char));
-	char* filename2     = malloc(200*sizeof(char));
-	char* filename3     = malloc(200*sizeof(char));
-	char* filename_num  = malloc(200*sizeof(char));
-	char* filename_add  = malloc(200*sizeof(char));
-	char* filename_sub  = malloc(200*sizeof(char));
-	char* filename_mul  = malloc(200*sizeof(char));
-	char* filename_div  = malloc(200*sizeof(char));
-	char* filename_sqrt = malloc(200*sizeof(char));
-	char* filename_fma  = malloc(200*sizeof(char));
-	sprintf(filename1,     "result/fp%d(1-%d-%d)_1_op_res.txt", float_size, exponent_size, mantissa_size);
-	sprintf(filename2,     "result/fp%d(1-%d-%d)_2_op_res.txt", float_size, exponent_size, mantissa_size);
-	sprintf(filename3,     "result/fp%d(1-%d-%d)_3_op_res.txt", float_size, exponent_size, mantissa_size);
-	sprintf(filename_num,  "result/fp%d(1-%d-%d)_num_res.txt",  float_size, exponent_size, mantissa_size);
-	sprintf(filename_add,  "result/fp%d(1-%d-%d)_add_res.txt",  float_size, exponent_size, mantissa_size);
-	sprintf(filename_sub,  "result/fp%d(1-%d-%d)_sub_res.txt",  float_size, exponent_size, mantissa_size);
-	sprintf(filename_mul,  "result/fp%d(1-%d-%d)_mul_res.txt",  float_size, exponent_size, mantissa_size);
-	sprintf(filename_div,  "result/fp%d(1-%d-%d)_div_res.txt",  float_size, exponent_size, mantissa_size);
-	sprintf(filename_sqrt, "result/fp%d(1-%d-%d)_sqrt_res.txt", float_size, exponent_size, mantissa_size);
-	sprintf(filename_fma,  "result/fp%d(1-%d-%d)_fma_res.txt",  float_size, exponent_size, mantissa_size);
+	char* filename1     	 = malloc(200*sizeof(char));
+	char* filename2     	 = malloc(200*sizeof(char));
+	char* filename3     	 = malloc(200*sizeof(char));
+	char* filename_num  	 = malloc(200*sizeof(char));
+	char* filename_add  	 = malloc(200*sizeof(char));
+	char* filename_sub  	 = malloc(200*sizeof(char));
+	char* filename_mul  	 = malloc(200*sizeof(char));
+	char* filename_div  	 = malloc(200*sizeof(char));
+	char* filename_sqrt 	 = malloc(200*sizeof(char));
+	char* filename_fma  	 = malloc(200*sizeof(char));
+	char* filename_conv_f_f  = malloc(200*sizeof(char));
+	char* filename_conv_f_i  = malloc(200*sizeof(char));
+	char* filename_conv_f_u  = malloc(200*sizeof(char));
+	char* filename_conv_i_f  = malloc(200*sizeof(char));
+	char* filename_conv_u_f  = malloc(200*sizeof(char));
+	sprintf(filename1,         "result/fp%d(1-%d-%d)_1_op_res.txt", float_size, exponent_size, mantissa_size);
+	sprintf(filename2,         "result/fp%d(1-%d-%d)_2_op_res.txt", float_size, exponent_size, mantissa_size);
+	sprintf(filename3,         "result/fp%d(1-%d-%d)_3_op_res.txt", float_size, exponent_size, mantissa_size);
+	sprintf(filename_num,      "result/fp%d(1-%d-%d)_num_res.txt",  float_size, exponent_size, mantissa_size);
+	sprintf(filename_add,      "result/fp%d(1-%d-%d)_add_res.txt",  float_size, exponent_size, mantissa_size);
+	sprintf(filename_sub,      "result/fp%d(1-%d-%d)_sub_res.txt",  float_size, exponent_size, mantissa_size);
+	sprintf(filename_mul,      "result/fp%d(1-%d-%d)_mul_res.txt",  float_size, exponent_size, mantissa_size);
+	sprintf(filename_div,      "result/fp%d(1-%d-%d)_div_res.txt",  float_size, exponent_size, mantissa_size);
+	sprintf(filename_sqrt,     "result/fp%d(1-%d-%d)_sqrt_res.txt", float_size, exponent_size, mantissa_size);
+	sprintf(filename_fma,      "result/fp%d(1-%d-%d)_fma_res.txt",  float_size, exponent_size, mantissa_size);
+	sprintf(filename_conv_f_f, "result/fp%d(1-%d-%d)_to_fp%d(1-%d-%d)_conv_res.txt",  float_size, exponent_size, mantissa_size, float2_size, exponent2_size, mantissa2_size);
+	sprintf(filename_conv_f_i, "result/fp%d(1-%d-%d)_to_int_conv_res.txt",  float_size, exponent_size, mantissa_size);
+	sprintf(filename_conv_f_u, "result/fp%d(1-%d-%d)_to_uint_conv_res.txt",  float_size, exponent_size, mantissa_size);
+	sprintf(filename_conv_i_f, "result/int_to_fp%d(1-%d-%d)_conv_res.txt",  float_size, exponent_size, mantissa_size);
+	sprintf(filename_conv_u_f, "result/uint_to_fp%d(1-%d-%d)_to_conv_res.txt",  float_size, exponent_size, mantissa_size);
 
 	//double mantissa_upper_bound = 1.0;
 	//for (int i=1; i<=mantissa_size; i++) {
@@ -256,6 +283,11 @@ int main(unsigned int argc, char** argv) {
 	FILE *out_div_result;
 	FILE *out_sqrt_result;
 	FILE *out_fma_result;
+	FILE *out_conv_f_f_result;
+	FILE *out_conv_f_i_result;
+	FILE *out_conv_f_u_result;
+	FILE *out_conv_i_f_result;
+	FILE *out_conv_u_f_result;
 	//char green = ' ';
 
 	char* black  = malloc(sizeof BLACK);
@@ -288,16 +320,33 @@ int main(unsigned int argc, char** argv) {
 			file_sqrt_ptr = fopen(filename_sqrt, "w");
 		else if (op_type == 7)
 			file_fma_ptr = fopen(filename_fma, "w");
-		out1_result     = file1_ptr;
-		out2_result     = file2_ptr;
-		out3_result     = file3_ptr;
-		out_num_result  = file_num_ptr;
-		out_add_result  = file_add_ptr;
-		out_sub_result  = file_sub_ptr;
-		out_mul_result  = file_mul_ptr;
-		out_div_result  = file_div_ptr;
-		out_sqrt_result = file_sqrt_ptr;
-		out_fma_result  = file_fma_ptr;
+		else if (op_type == 8) {
+			if (conv_type == 1)
+				file_conv_f_f_ptr = fopen(filename_conv_f_f, "w");
+			else if (conv_type == 2)
+				file_conv_f_i_ptr = fopen(filename_conv_f_i, "w");
+			else if (conv_type == 3)
+				file_conv_f_u_ptr = fopen(filename_conv_f_u, "w");
+			else if (conv_type == 4)
+				file_conv_i_f_ptr = fopen(filename_conv_i_f, "w");
+			else if (conv_type == 5)
+				file_conv_u_f_ptr = fopen(filename_conv_u_f, "w");
+		}
+		out1_result     	= file1_ptr;
+		out2_result     	= file2_ptr;
+		out3_result     	= file3_ptr;
+		out_num_result  	= file_num_ptr;
+		out_add_result  	= file_add_ptr;
+		out_sub_result  	= file_sub_ptr;
+		out_mul_result  	= file_mul_ptr;
+		out_div_result  	= file_div_ptr;
+		out_sqrt_result 	= file_sqrt_ptr;
+		out_fma_result  	= file_fma_ptr;
+		out_conv_f_f_result = file_conv_f_f_ptr;
+		out_conv_f_i_result = file_conv_f_i_ptr;
+		out_conv_f_u_result = file_conv_f_u_ptr;
+		out_conv_i_f_result = file_conv_i_f_ptr;
+		out_conv_u_f_result = file_conv_u_f_ptr;
 		black  = "";
 		red    = "";
 		green  = "";
@@ -309,26 +358,31 @@ int main(unsigned int argc, char** argv) {
 		creset = "";
 	}
 	else {
-		std_out 		= 1;
-		out1_result     = stdout; 
-		out2_result     = stdout; 
-		out3_result     = stdout; 
-		out_num_result  = stdout; 
-		out_add_result  = stdout; 
-		out_sub_result  = stdout; 
-		out_mul_result  = stdout; 
-		out_div_result  = stdout;
-		out_sqrt_result = stdout;
-		out_fma_result  = stdout;
-		black  = BLACK;
-		red    = RED;
-		green  = GREEN;
-		yellow = YELLOW;
-		blue   = BLUE;
-		purple = PURPLE;
-		cyan   = CYAN;
-		white  = WHITE;
-		creset = CRESET;
+		std_out 			= 1;
+		out1_result     	= stdout;
+		out2_result     	= stdout;
+		out3_result     	= stdout;
+		out_num_result  	= stdout;
+		out_add_result  	= stdout;
+		out_sub_result  	= stdout;
+		out_mul_result  	= stdout;
+		out_div_result  	= stdout;
+		out_sqrt_result 	= stdout;
+		out_fma_result  	= stdout;
+		out_conv_f_f_result = stdout;
+		out_conv_f_i_result = stdout;
+		out_conv_f_u_result = stdout;
+		out_conv_i_f_result = stdout;
+		out_conv_u_f_result = stdout;
+		black  				= BLACK;
+		red    				= RED;
+		green  				= GREEN;
+		yellow 				= YELLOW;
+		blue   				= BLUE;
+		purple 				= PURPLE;
+		cyan   				= CYAN;
+		white  				= WHITE;
+		creset 				= CRESET;
 	}
 
 	if (op_type == 0) {
@@ -346,6 +400,7 @@ int main(unsigned int argc, char** argv) {
 					  );
 		}
 		if (std_out == 0) {
+			printf(GREEN "\nGenerated results for single input operand operations\n" CRESET);
 			fclose(out1_result);
 		}
 		fprintf(out2_result, "%s\nFLOAT_%d (1-%d-%d)\n", green, float_size, exponent_size, mantissa_size);
@@ -364,7 +419,7 @@ int main(unsigned int argc, char** argv) {
 				float_to_hex(fsub, &mysub_h, &fsub_out);
 				float_to_hex(fmul, &mymul_h, &fmul_out);
 				float_to_hex(fdiv, &mydiv_h, &fdiv_out);
-				fprintf(stdout, "%s\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\n%s", 
+				fprintf(out2_result, "%s\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\n%s", 
 						cyan,
 						float_size/4, f1.int_i, float_size/4, f2.int_i,
 						float_size/4, mysum_h,  float_size/4, mysub_h, 
@@ -376,6 +431,7 @@ int main(unsigned int argc, char** argv) {
 			}
 		}
 		if (std_out == 0) {
+			printf(GREEN "Generated results for double input operand operations\n" CRESET);
 			fclose(out2_result);
 		}
 		fprintf(out3_result, "%s\nFLOAT_%d (1-%d-%d)\n", green, float_size, exponent_size, mantissa_size);
@@ -401,6 +457,7 @@ int main(unsigned int argc, char** argv) {
 			}
 		}
 		if (std_out == 0) {
+			printf(GREEN "Generated results for three input operand operations\n" CRESET);
 			fclose(out3_result);
 		}
 	}
@@ -723,51 +780,55 @@ int main(unsigned int argc, char** argv) {
 
 	if (op_type == 8) {
 		if (conv_type == 1) {
-			SET_FLOAT_SIZE_2:
-			printf(PURPLE "\n\nEnter Second Float Size: " CRESET);
-			scanf("%d", &float_size_2);  
-			valid_float = check_input_float_2();
-			if (valid_float == FP_ERROR) {
-			  	float_set_2 = 0;
-			  	goto SET_FLOAT_SIZE_2;		
+
+			SET_FLOAT2_SIZE:
+			if (float2_set == 0) {
+				printf(PURPLE "\n\nEnter Second Float Size: " CRESET);
+				scanf("%d", &float2_size);
 			}
 
-			SET_EXPONENT_SIZE_2:
-			if (exponent_set_2 == 0) {
+			valid_float = check_input_float_2();
+			if (valid_float == FP_ERROR) {
+			  	float2_set = 0;
+			  	goto SET_FLOAT2_SIZE;		
+			}
+
+			SET_EXPONENT2_SIZE:
+			if (exponent2_set == 0) {
 				printf(PURPLE "Enter exponent size: " CRESET);
-				scanf("%d", &exponent_size_2);
+				scanf("%d", &exponent2_size);
 			}  
 			valid_exponent = check_input_exponent_2();
 			if (valid_exponent == FP_ERROR) {
-				exponent_set_2 = 0;
-				goto SET_EXPONENT_SIZE_2;		
+				exponent2_set = 0;
+				goto SET_EXPONENT2_SIZE;		
 			}
 
-			SET_MANTISSA_SIZE_2:
-			if (mantissa_set_2 == 0) {
+			SET_MANTISSA2_SIZE:
+			if (mantissa2_set == 0) {
 				printf(PURPLE "Enter mantissa size: " CRESET);
-				scanf("%d", &mantissa_size_2);
+				scanf("%d", &mantissa2_size);
 			}  
 			valid_mantissa = check_input_mantissa_2();
 			if (valid_mantissa == FP_ERROR) {
-				mantissa_set_2 = 0;
-				goto SET_MANTISSA_SIZE_2;		
+				mantissa2_set = 0;
+				goto SET_MANTISSA2_SIZE;		
 			}
 
 			SET_CUSTOM_BIAS_2:
-			if (bias_set_2 == 0) {
+			if (bias2_set == 0) {
 				printf(BLUE "\nDo you want a custom bias? (Y/N) " CRESET);
 				scanf(" %c", &custom_bias_2);
 				int valid_bias_2 = check_input_bias_2();
 				if (valid_bias_2 == FP_ERROR) {
-					bias_set_2 = 0;
+					bias2_set = 0;
 					goto SET_CUSTOM_BIAS_2;		
 				}
 			}
 
-			upper_bound_2 = pow(2,(pow(2,(double)exponent_size_2)-1-bias_2));
-			exp_range_2   = pow(2,exponent_size_2);
-			mnt_range_2   = pow(2,mantissa_size_2);
+			upper_bound_2 = pow(2,(pow(2,(double)exponent2_size)-1-bias_2));
+			exp_range_2   = pow(2,exponent2_size);
+			mnt_range_2   = pow(2,mantissa2_size);
 
 			CONVERSION_OPTION_1:
 			printf(      "\nCHOOSE OPTION:\n"
@@ -803,7 +864,7 @@ int main(unsigned int argc, char** argv) {
 					hex_to_float(f1, &f1_out);
 					f2.float_i = f1_out;
 		  			exact = float_to_hex_2(f2, &myfloat_h, &f2_out);
-					printf(CYAN "0x%lx 0x%lx\n" CRESET, f1.int_i, myfloat_h);
+					fprintf(out_conv_f_f_result, "%s0x%lx 0x%lx\n%s", cyan, f1.int_i, myfloat_h, creset);
 		  		}
 			}
 		}
