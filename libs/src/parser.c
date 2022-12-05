@@ -55,27 +55,30 @@ void parse_args(unsigned int argc, char** argv) {
 					"                            Sets the type of operation:\n"
 					"                                (0)  GENERATE ALL\n"
 					"                                (1)  GENERATE NUMBERS\n"
-					"                                (2)  ADDITION\n"
-					"                                (3)  SUBTRACTION\n"
-					"                                (4)  MULTIPLICATION\n"
-					"                                (5)  DIVISION\n"
-					"                                (6)  SQUARE ROOT\n"
-					"                                (7)  FUSED MULTIPLY-ADD\n"
-					"                                (8)  CONVERSION\n"
-					"                                (9)  FLOAT LOOKUP (returns hex):\n"
-					"                                (10) HEX LOOKUP (returns float):\n"
-					"       --cop <arg> \n"
+					"                                (2)  ARITHMETIC\n"
+					"                                (3)  CONVERSION\n"
+					"                                (4)  FLOAT LOOKUP (returns hex):\n"
+					"                                (5)  HEX LOOKUP (returns float):\n"
+					"       --arith_op <arg> \n"
+					"                            Sets the type of operation:\n"
+					"                                (1)  ADDITION\n"
+					"                                (2)  SUBTRACTION\n"
+					"                                (3)  MULTIPLICATION\n"
+					"                                (4)  DIVISION\n"
+					"                                (5)  SQUARE ROOT\n"
+					"                                (6)  FUSED MULTIPLY-ADD\n"
+					"       --conv_op <arg> \n"
 					"                            Sets the type of conversion-operation\n"
-					"                                 (1) FLOAT_type_1 to FLOAT_type_2\n"
-					"                                 (2) FLOAT to INT\n"
-					"                                 (3) FLOAT to UINT\n"
-					"                                 (4) INT to FLOAT\n"
-					"                                 (5) UINT to FLOAT\n"
+					"                                 (1)  FLOAT_type_1 to FLOAT_type_2\n"
+					"                                 (2)  FLOAT to INT\n"
+					"                                 (3)  FLOAT to UINT\n"
+					"                                 (4)  INT to FLOAT\n"
+					"                                 (5)  UINT to FLOAT\n"
 					"  -fo, --file_out \n"
 					"                            Sets the output to be printed to a file\n"
-					"  -s, --single_case \n"
+					"  		--single_case \n"
 					"                            Perform a single case\n"
-					"  -a, --all_cases \n"
+					"  		--all_cases \n"
 					"                            Perform all cases\n"
 					"\n");
 				exit(0);
@@ -137,6 +140,65 @@ void parse_args(unsigned int argc, char** argv) {
 				bias_2 = atoi(argv[i]);
 				custom_bias = 'Y';
 				printf(PURPLE "Bias 2: " CRESET "%d\n", bias_2);
+			}
+			else if (strcmp(argv[i], "--op") == 0) {
+				i++;
+				check_argc_index(i, argc, argv);
+				op_set = 1;
+				op_type = atoi(argv[i]);
+				printf(WHITE "OP TYPE: " CRESET "%d\n", op_type);
+			}
+			else if (strcmp(argv[i], "--arith_op") == 0) {
+				if (conv_op_set == 1) {
+					printf(RED "ERROR: " CRESET "Cannot set both ARTH_TYPE and CONV_TYPE\n");
+					exit(1);
+				} 
+				i++;
+				check_argc_index(i, argc, argv);
+				arith_op_set = 1;
+				arith_type = atoi(argv[i]);
+				printf(WHITE "ARITHMETIC OP TYPE: " CRESET "%d\n", arith_type);
+			}
+			else if (strcmp(argv[i], "--conv_op") == 0) {
+				if (arith_op_set == 1) {
+					printf(RED "ERROR: " CRESET "Cannot set both ARTH_TYPE and CONV_TYPE\n");
+					exit(1);
+				}
+				i++;
+				check_argc_index(i, argc, argv);
+				conv_op_set = 1;
+				conv_type = atoi(argv[i]);
+				printf(WHITE "CONVERSION OP TYPE: " CRESET "%d\n", conv_type);
+			}
+			else if (strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--round_mode") == 0) {
+				i++;
+				check_argc_index(i, argc, argv);
+				round_mode_set  = 1;
+				round_mode = atoi(argv[i]);
+				printf(WHITE "ROUND MODE: " CRESET "%d\n", round_mode);
+			}
+			else if (strcmp(argv[i], "-fo") == 0 || strcmp(argv[i], "--file_out") == 0) {
+				i++;
+				check_argc_index(i, argc, argv);
+				file_out_set  = 1;
+				if (strcmp(argv[i], "Y") == 0 || strcmp(argv[i], "y") == 0) {
+					file_print = 'Y';
+					printf(BLUE "WRITE FILE OUT: " CRESET "YES\n");
+				}
+				else if (strcmp(argv[i], "N") == 0 || strcmp(argv[i], "n") == 0) {
+					file_print = 'N';
+					printf(BLUE "WRITE FILE OUT: " CRESET "NO\n");
+				}
+			}
+			else if (strcmp(argv[i], "--single_case") == 0) {
+				choice_set  = 1;
+				choice_type = 1;
+				printf(GREEN "TEST SCOPE: " CRESET "SINGLE RESULT\n");
+			}
+			else if (strcmp(argv[i], "--all_cases") == 0) {
+				choice_set  = 1;
+				choice_type = 2;
+				printf(GREEN "TEST SCOPE: " CRESET "ALL RESULTS\n");
 			}
 			else  {
 				if (i > 0) {

@@ -184,13 +184,13 @@ int check_input_bias_2() {
 
 int check_input_op_type() {
 	static unsigned int error_cnt_op_type = 0;
-	if (op_type < 0 || op_type > 10) {
+	if (op_type < 0 || op_type > 5) {
 		if (error_cnt_op_type == 10) {
 			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
 			exit(-1);
 		}		
 		if (error_cnt_op_type > 0) {
-			printf(RED "ERROR: " WHITE "Invalid op type (PLEASE ENTER A VALID OP TYPE NUMBER [0-10]\n" CRESET);
+			printf(RED "ERROR: " WHITE "Invalid op type (PLEASE ENTER A VALID OP TYPE NUMBER [0-5]\n" CRESET);
 		}
 		else {
 			printf(RED "ERROR: " WHITE "Invalid op type\n" CRESET);
@@ -201,25 +201,24 @@ int check_input_op_type() {
 	return FP_SUCCESS;
 }
 
-int check_input_choice_type() {
-	static unsigned int error_cnt_choice_type = 0;
-	if (choice_type < 1 || choice_type > 2) {
-		if (error_cnt_choice_type == 10) {
+int check_input_arith_type() {
+	static unsigned int error_cnt_arith_type = 0;
+	if (arith_type < 1 || arith_type > 6) {
+		if (error_cnt_arith_type == 10) {
 			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
 			exit(-1);
 		}		
-		if (error_cnt_choice_type > 0) {
-			printf(RED "ERROR: " WHITE "Invalid choice (PLEASE ENTER A VALID CHOICE NUMBER [1-2]\n" CRESET);
+		if (error_cnt_arith_type > 0) {
+			printf(RED "ERROR: " WHITE "Invalid arithmetic type (PLEASE ENTER A VALID ARITHMETIC TYPE NUMBER [1-6]\n" CRESET);
 		}
 		else {
-			printf(RED "ERROR: " WHITE "Invalid choice\n" CRESET);
+			printf(RED "ERROR: " WHITE "Invalid arithmetic type\n" CRESET);
 		}
-		error_cnt_choice_type++;
+		error_cnt_arith_type++;
 		return FP_ERROR;
 	}
 	return FP_SUCCESS;
 }
-
 
 int check_input_conv_type() {
 	static unsigned int error_cnt_conv_type = 0;
@@ -259,6 +258,24 @@ int check_input_rounding_mode() {
 	return FP_SUCCESS;
 }
 
+int check_input_choice_type() {
+	static unsigned int error_cnt_choice_type = 0;
+	if (choice_type < 1 || choice_type > 2) {
+		if (error_cnt_choice_type == 10) {
+			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
+			exit(-1);
+		}		
+		if (error_cnt_choice_type > 0) {
+			printf(RED "ERROR: " WHITE "Invalid choice (PLEASE ENTER A VALID CHOICE NUMBER [1-2]\n" CRESET);
+		}
+		else {
+			printf(RED "ERROR: " WHITE "Invalid choice\n" CRESET);
+		}
+		error_cnt_choice_type++;
+		return FP_ERROR;
+	}
+	return FP_SUCCESS;
+}
 
 int check_input_print_answer() {
 	static unsigned int error_cnt_print_answer = 0;
