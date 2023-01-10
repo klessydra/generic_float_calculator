@@ -76,9 +76,9 @@ void parse_args(unsigned int argc, char** argv) {
 					"                                 (5)  UINT to FLOAT\n"
 					"  -fo, --file_out \n"
 					"                            Sets the output to be printed to a file\n"
-					"  		--single_case \n"
+					"  --single_case \n"
 					"                            Perform a single case\n"
-					"  		--all_cases \n"
+					"  --all_cases \n"
 					"                            Perform all cases\n"
 					"\n");
 				exit(0);
