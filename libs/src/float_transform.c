@@ -102,6 +102,7 @@ int float_to_hex(number f, uint64_t* myfloat_h, double* f_out) {
 	}
 	else if (absolute_float == 0) { // if input float is 0 
 		*myfloat_h = sign_extract << float_size-1;
+		exact = 1;
 		//printf(CYAN "HERE2\n");
 	}
 	else {
