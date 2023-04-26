@@ -105,6 +105,8 @@ int main(unsigned int argc, char** argv) {
 	uint64_t mymul_h	= 0x0;
 	uint64_t mydiv_h	= 0x0;
 
+	int size_rand_gen = 0;
+
 	double   f1_out, f2_out, f3_out, fsum_out, fsub_out, fmul_out, fdiv_out, fsqrt_out, fma_out = 0x0;
 	number f1, f2, f3, fsum, fsub, fmul, fdiv, fsqrt, fma;
 
@@ -499,7 +501,8 @@ int main(unsigned int argc, char** argv) {
 			if (choice_set == 0) {
 				printf(      "\nCHOOSE OPTION:\n"
 							 "	(1)  SINGLE ADDITION\n"
-							 "	(2)  ALL POSSIBLE ADDITIONS\n"
+							 "	(2)  RANDOM SET OF ADDITIONS\n"
+							 "	(3)  ALL POSSIBLE ADDITIONS\n"
 							 "\nOPTION: "
 							);
 				scanf("%d", &choice_type);
@@ -529,6 +532,24 @@ int main(unsigned int argc, char** argv) {
 			/************************************************************************************************************************/
 			}	
 			else if (choice_type == 2) {
+				printf(GREEN "\nInsert the number of random operations to run: " CRESET);
+				scanf("%d", &size_rand_gen);
+				for (int i=0; i<size_rand_gen; i++){
+					f1.int_i = rand_gen(0,pow(2,float_size)-1);
+					f2.int_i = rand_gen(0,pow(2,float_size)-1);
+					hex_to_float(f1, &f1_out);
+					hex_to_float(f2, &f2_out);
+					fsum.float_i = f1_out + f2_out;
+					float_to_hex(fsum, &mysum_h, &fsum_out);
+					fprintf(out_add_result, "%s\t0x%.*lx\t0x%.*lx\t0x%.*lx\n%s", 
+							cyan, 
+							float_size/4, f1.int_i, float_size/4, f2.int_i,
+							float_size/4, mysum_h,
+							creset
+					  	  );
+				}
+			}
+			else if (choice_type == 3) {
 				for (int i=0; i<number_of_floats; i++){
 					for (int j=0; j<number_of_floats; j++){
 						f1.int_i = i;
@@ -554,7 +575,8 @@ int main(unsigned int argc, char** argv) {
 			if (choice_set == 0) {
 				printf(      "\nCHOOSE OPTION:\n"
 							 "	(1)  SINGLE SUBTRACTION\n"
-							 "	(2)  ALL POSSIBLE SUBTRACTIONS\n"
+							 "	(2)  RANDOM SET OF SUBTRACTIONS\n"
+							 "	(3)  ALL POSSIBLE SUBTRACTIONS\n"
 							 "\nOPTION: "
 							);
 				scanf("%d", &choice_type);
@@ -585,6 +607,24 @@ int main(unsigned int argc, char** argv) {
 			/************************************************************************************************************************/
 			}	
 			else if (choice_type == 2) {
+				printf(GREEN "\nInsert the number of random operations to run: " CRESET);
+				scanf("%d", &size_rand_gen);
+				for (int i=0; i<size_rand_gen; i++){
+					f1.int_i = rand_gen(0,pow(2,float_size)-1);
+					f2.int_i = rand_gen(0,pow(2,float_size)-1);
+					hex_to_float(f1, &f1_out);
+					hex_to_float(f2, &f2_out);
+					fsub.float_i = f1_out - f2_out;
+					float_to_hex(fsub, &mysub_h, &fsub_out);
+					fprintf(out_sub_result, "%s\t0x%.*lx\t0x%.*lx\t0x%.*lx\n%s",
+							cyan, 
+							float_size/4, f1.int_i, float_size/4, f2.int_i,
+							float_size/4, mysub_h,
+							creset
+					  	  );
+				}
+			}
+			else if (choice_type == 3) {
 				for (int i=0; i<number_of_floats; i++){
 					for (int j=0; j<number_of_floats; j++){
 						f1.int_i = i;
@@ -610,7 +650,8 @@ int main(unsigned int argc, char** argv) {
 			if (choice_set == 0) {
 				printf(      "\nCHOOSE OPTION:\n"
 							 "	(1)  SINGLE MULTIPLICATION\n"
-							 "	(2)  ALL POSSIBLE MULTIPLICATIONS\n"
+							 "	(2)  RANDOM SET OF MULTIPLICATIONS\n"
+							 "	(3)  ALL POSSIBLE MULTIPLICATIONS\n"
 							 "\nOPTION: "
 							);
 				scanf("%d", &choice_type);
@@ -640,6 +681,24 @@ int main(unsigned int argc, char** argv) {
 				/************************************************************************************************************************/
 			}   
 			else if (choice_type == 2) {
+				printf(GREEN "\nInsert the number of random operations to run: " CRESET);
+				scanf("%d", &size_rand_gen);
+				for (int i=0; i<size_rand_gen; i++){
+					f1.int_i = rand_gen(0,pow(2,float_size)-1);
+					f2.int_i = rand_gen(0,pow(2,float_size)-1);
+					hex_to_float(f1, &f1_out);
+					hex_to_float(f2, &f2_out);
+					fsub.float_i = f1_out * f2_out;
+					float_to_hex(fsub, &mysub_h, &fsub_out);
+					fprintf(out_sub_result, "%s\t0x%.*lx\t0x%.*lx\t0x%.*lx\n%s",
+							cyan, 
+							float_size/4, f1.int_i, float_size/4, f2.int_i,
+							float_size/4, mysub_h,
+							creset
+					  	  );
+				}
+			}
+			else if (choice_type == 3) {
 				for (int i=0; i<number_of_floats; i++){
 					for (int j=0; j<number_of_floats; j++){
 						f1.int_i = i;
@@ -665,7 +724,8 @@ int main(unsigned int argc, char** argv) {
 			if (choice_set == 0) {
 				printf(      "\nCHOOSE OPTION:\n"
 							 "	(1)  SINGLE DIVISION\n"
-							 "	(2)  ALL POSSIBLE DIVISIONS\n"
+							 "	(2)  RANDOM SET OF DIVISIONS\n"
+							 "	(3)  ALL POSSIBLE DIVISIONS\n"
 							 "\nOPTION: "
 							);
 				scanf("%d", &choice_type);
@@ -696,6 +756,24 @@ int main(unsigned int argc, char** argv) {
 				/************************************************************************************************************************/
 			}	
 			else if (choice_type == 2) {
+				printf(GREEN "\nInsert the number of random operations to run: " CRESET);
+				scanf("%d", &size_rand_gen);
+				for (int i=0; i<size_rand_gen; i++){
+					f1.int_i = rand_gen(0,pow(2,float_size)-1);
+					f2.int_i = rand_gen(0,pow(2,float_size)-1);
+					hex_to_float(f1, &f1_out);
+					hex_to_float(f2, &f2_out);
+					fsub.float_i = f1_out / f2_out;
+					float_to_hex(fsub, &mysub_h, &fsub_out);
+					fprintf(out_sub_result, "%s\t0x%.*lx\t0x%.*lx\t0x%.*lx\n%s",
+							cyan, 
+							float_size/4, f1.int_i, float_size/4, f2.int_i,
+							float_size/4, mysub_h,
+							creset
+					  	  );
+				}
+			}
+			else if (choice_type == 3) {
 				for (int i=0; i<number_of_floats; i++){
 					for (int j=0; j<number_of_floats; j++){
 						f1.int_i = i;
@@ -721,7 +799,8 @@ int main(unsigned int argc, char** argv) {
 			if (choice_set == 0) {
 				printf(      "\nCHOOSE OPTION:\n"
 							 "	(1)  SINGLE SQUARE ROOT\n"
-							 "	(2)  ALL POSSIBLE SQUARE ROOTS\n"
+							 "	(2)  RANDOM SET OF SQUARE ROOTS\n"
+							 "	(3)  ALL POSSIBLE SQUARE ROOTS\n"
 							 "\nOPTION: "
 							);
 				scanf("%d", &choice_type);
@@ -744,6 +823,21 @@ int main(unsigned int argc, char** argv) {
 			/************************************************************************************************************************/
 			}	
 			else if (choice_type == 2) {
+				printf(GREEN "\nInsert the number of random operations to run: " CRESET);
+				scanf("%d", &size_rand_gen);
+				for (int i=0; i<size_rand_gen; i++){
+					f1.int_i = rand_gen(0,pow(2,float_size)-1);
+					hex_to_float(f1, &f1_out);
+					fsqrt.float_i = sqrt(f1_out);
+					float_to_hex(fsqrt, &myfloat_h, &fsqrt_out);
+					fprintf(out_sqrt_result, "%s\t0x%.*lx\t0x%.*lx\n%s", 
+							cyan, 
+							float_size/4, f1.int_i, float_size/4, myfloat_h,
+							creset
+					  	  );
+				}
+			}
+			else if (choice_type == 3) {
 				for (int i=0; i<number_of_floats; i++){
 					f1.int_i = i;
 					hex_to_float(f1, &f1_out);
@@ -764,7 +858,8 @@ int main(unsigned int argc, char** argv) {
 			if (choice_set == 0) {
 				printf(      "\nCHOOSE OPTION:\n"
 							 "	(1)  SINGLE FUSED MULTIPLY-ADD\n"
-							 "	(2)  ALL POSSIBLE FUSED MULTIPLY-ADD\n"
+							 "	(2)  RANDOM SET OF FUSED MULTIPLY-ADD\n"
+							 "	(3)  ALL POSSIBLE FUSED MULTIPLY-ADD\n"
 							 "\nOPTION: "
 							);
 				scanf("%d", &choice_type);
@@ -791,8 +886,28 @@ int main(unsigned int argc, char** argv) {
 				fprintf(out_fma_result, "%s\t(%lf * %lf) + %lf = %lf\n%s", cyan, f1_out, f2_out, f3_out, fma.float_i, creset);
 				fprintf(out_fma_result, "%s\t((0x%lx) * (0x%lx)) + (0x%lx) = (0x%lx)\n\n%s", cyan, f1.int_i, f2.int_i, f3.int_i, myfloat_h, creset);
 			/************************************************************************************************************************/
-			}   
+			}
 			else if (choice_type == 2) {
+				printf(GREEN "\nInsert the number of random operations to run: " CRESET);
+				scanf("%d", &size_rand_gen);
+				for (int i=0; i<size_rand_gen; i++){
+					f1.int_i = rand_gen(0,pow(2,float_size)-1);
+					f2.int_i = rand_gen(0,pow(2,float_size)-1);
+					f3.int_i = rand_gen(0,pow(2,float_size)-1);
+					hex_to_float(f1, &f1_out);
+					hex_to_float(f2, &f2_out);
+					hex_to_float(f3, &f3_out);
+					fma.float_i = (f1_out * f2_out) + f3_out;
+					float_to_hex(fma, &myfloat_h, &fma_out);
+					fprintf(out_fma_result, "%s\t0x%.*lx\t0x%.*lx\t0x%.*lx\t0x%.*lx\n%s", 
+							cyan, 
+							float_size/4, f1.int_i, float_size/4, f2.int_i,
+							float_size/4, f3.int_i, float_size/4, myfloat_h,
+							creset
+					  	  );
+				}
+			}
+			else if (choice_type == 3) {
 				for (int i=0; i<number_of_floats; i++){
 					for (int j=0; j<number_of_floats; j++){
 						for (int k=0; k<number_of_floats; k++){
@@ -873,7 +988,8 @@ int main(unsigned int argc, char** argv) {
 			if (choice_set == 0) {
 				printf(GREEN "\nCHOOSE OPTION:\n"
 							 "	(1)  SINGLE CONVERSION\n"
-							 "	(2)  ALL POSSIBLE CONVERSIONS\n"
+							 "	(2)  RANDOM SET OF CONVERSIONS\n"
+							 "	(3)  ALL POSSIBLE CONVERSIONS\n"
 							 "\nOPTION: "
 						CRESET);
 				scanf("%d", &choice_type); 
@@ -900,7 +1016,18 @@ int main(unsigned int argc, char** argv) {
 		  
 		  	/************************************************************************************************************************/
 		  	}
-		  	else if (choice_type == 2) {
+			else if (choice_type == 2) {
+				printf(GREEN "\nInsert the number of random operations to run: " CRESET);
+				scanf("%d", &size_rand_gen);
+				for (int i=0; i<size_rand_gen; i++){
+					f1.int_i = rand_gen(0,pow(2,float_size)-1);
+					hex_to_float(f1, &f1_out);
+					f2.float_i = f1_out;
+		  			exact = float_to_hex_2(f2, &myfloat_h, &f2_out);
+					fprintf(out_conv_f_f_result, "%s0x%lx 0x%lx\n%s", cyan, f1.int_i, myfloat_h, creset);
+				}
+			}
+			else if (choice_type == 3) {
 				for (int i=0; i<number_of_floats; i++){
 					f1.int_i = i;
 					hex_to_float(f1, &f1_out);
@@ -925,7 +1052,8 @@ int main(unsigned int argc, char** argv) {
 			if (choice_set == 0) {
 				printf(GREEN "\nCHOOSE OPTION:\n"
 							 "	(1)  SINGLE CONVERSION\n"
-							 "	(2)  ALL POSSIBLE CONVERSIONS\n"
+							 "	(2)  RANDOM SET OF CONVERSIONS\n"
+							 "	(3)  ALL POSSIBLE CONVERSIONS\n"
 							 "\nOPTION: "
 						CRESET);
 				scanf("%d", &choice_type);
@@ -993,8 +1121,10 @@ int main(unsigned int argc, char** argv) {
 				/*****************************************************************************/
 				}
 				else if (choice_type == 2) {
-					for (int i=0; i<number_of_floats; i++){
-						f1.int_i = i;
+					printf(GREEN "\nInsert the number of random operations to run: " CRESET);
+					scanf("%d", &size_rand_gen);
+					for (int i=0; i<size_rand_gen; i++){
+						f1.int_i = rand_gen(0,pow(2,float_size)-1);
 
 						if ( is_NaN_inf ( f1 ) ) {														//check for NaN and inf
 							printf(CYAN "(0x%lx) = Invalid input\n" CRESET, f1.int_i);
@@ -1041,8 +1171,62 @@ int main(unsigned int argc, char** argv) {
 								f1_int--;
 							}
 							break;
-					}
+						}
 						PRINT_4:
+							printf(CYAN "(0x%lx) = %ld\n" CRESET, f1.int_i, f1_int);
+					}
+				}
+				else if (choice_type == 3) {
+					for (int i=0; i<number_of_floats; i++) {
+						f1.int_i = i;
+
+						if ( is_NaN_inf ( f1 ) ) {														//check for NaN and inf
+							printf(CYAN "(0x%lx) = Invalid input\n" CRESET, f1.int_i);
+							continue;
+						}
+						hex_to_float(f1, &f1_out);
+						int64_t f1_int = f1_out;
+						double rem = f1_out - f1_int;
+
+
+						if ( f1_out > pow(2, integer_width-1) - 1 ) {
+							f1_int = pow(2, integer_width-1) - 1;
+							rem = 0;
+							goto PRINT_5;
+						}
+
+						if ( f1_out < -pow(2, integer_width-1) ) {
+							f1_int = -pow(2, integer_width-1);
+							rem = 0;
+							goto PRINT_5;
+						}
+	
+						switch (round_mode) { 
+						case 1:                                                                     //round near ties even
+							if (rem > 0.5 || ( rem == 0.5 && (f1_int % 2 == 1)) ) {
+								f1_int++;
+							}
+							if (rem < -0.5 || ( rem == -0.5 && ( (-f1_int) % 2 == 1)) ) {
+								f1_int--;
+							}
+							break;
+						case 2:		//round toward zero
+							break;
+						case 3:		//round down
+							if ( rem < 0.0) f1_int--;
+							break;
+						case 4:		//round up
+							if ( rem > 0.0) f1_int++;
+							break;
+						case 5:		//round near ties up
+							if (rem >= 0.5 ) {
+								f1_int++;
+							} else if (rem <= -0.5) {
+								f1_int--;
+							}
+							break;
+						}
+						PRINT_5:
 							printf(CYAN "(0x%lx) = %ld\n" CRESET, f1.int_i, f1_int);
 					}
 				}
@@ -1096,10 +1280,13 @@ int main(unsigned int argc, char** argv) {
 					}
 					PRINT_1:
 						printf(CYAN "\t(0x%lx) = %lu\n\n" CRESET, f1.int_i, f1_uint);
+				}
 				/*****************************************************************************/
-				} else if (choice_type == 2) {
-					for (int i=0; i<number_of_floats; i++){
-						f1.int_i = i;
+				else if (choice_type == 2) {
+					printf(GREEN "\nInsert the number of random operations to run: " CRESET);
+					scanf("%d", &size_rand_gen);
+					for (int i=0; i<size_rand_gen; i++){
+						f1.int_i = rand_gen(0,pow(2,float_size)-1);
 						uint sign = f1.int_i >> ( float_size - 1 );
 
 						if ( is_NaN_inf ( f1 ) ) {														//check for NaN and inf
@@ -1144,6 +1331,53 @@ int main(unsigned int argc, char** argv) {
 							printf(CYAN "(0x%lx) = %lu\n" CRESET, f1.int_i, f1_uint);
 					}
 				}
+				else if (choice_type == 3) {
+					for (int i=0; i<number_of_floats; i++) {
+						f1.int_i = i;
+						uint sign = f1.int_i >> ( float_size - 1 );
+
+						if ( is_NaN_inf ( f1 ) ) {														//check for NaN and inf
+							printf(CYAN "(0x%lx) = Invalid input\n" CRESET, f1.int_i);
+							continue;
+						}
+						hex_to_float(f1, &f1_out);
+						uint64_t f1_uint = f1_out;
+						double rem = f1_out - f1_uint;
+	
+						if (sign == 1) {
+							f1_uint = 0;
+							goto PRINT_6;
+						}	
+
+						if ( f1_out > pow(2, integer_width) - 1 ) {
+							f1_uint = pow(2, integer_width) - 1;
+							rem = 0;
+							goto PRINT_6;
+						}
+	
+						switch (round_mode) {
+							case 1:		//round near ties even
+								if (rem > 0.5 || ( rem == 0.5 && (f1_uint % 2 == 1)) ) {
+									f1_uint++;
+								}
+								break;
+							case 2:		//round toward zero
+								break;
+							case 3:		//round down
+								break;
+							case 4:		//round up
+								if ( rem != 0.0) f1_uint++;
+								break;
+							case 5:		//round near ties up
+								if (rem >= 0.5 ) {
+									f1_uint++;
+								}
+								break;
+						}
+						PRINT_6:
+							printf(CYAN "(0x%lx) = %lu\n" CRESET, f1.int_i, f1_uint);
+					}
+				}
 			}
 		}
 	
@@ -1153,7 +1387,8 @@ int main(unsigned int argc, char** argv) {
 			if (choice_set == 0) {
 				printf(GREEN "\nCHOOSE OPTION:\n"
 							 "	(1)  SINGLE CONVERSION\n"
-							 "	(2)  ALL POSSIBLE CONVERSIONS FOR A SPECIFIED LENGTH INTEGERS\n"
+							 "	(2)  RANDOM SET OF CONVERSIONS\n"
+							 "	(3)  ALL POSSIBLE CONVERSIONS\n"
 							 "\nOPTION: "
 						CRESET);
 				scanf("%d", &choice_type);
@@ -1174,15 +1409,33 @@ int main(unsigned int argc, char** argv) {
 					printf(CYAN "\t%ld = (0x%lx)\n" CRESET, int_input, myfloat_h);
 
 				}
-				else if ( choice_type == 2 ){
-
+				else if (choice_type == 2) {
 					INT_OPTION_2:
 					printf("\nINSERT INTEGER WIDTH: ");
 					scanf("%d", &integer_width);
 
 					int valid_int_width = check_input_int_width();
 					if (valid_int_width == FP_ERROR) {
-						goto INT_OPTION_2;		
+						goto INT_OPTION_2;
+					}
+
+					printf(GREEN "\nInsert the number of random operations to run: " CRESET);
+					scanf("%d", &size_rand_gen);
+					for (int64_t i=0; i<size_rand_gen; i++){
+						f1.float_i = rand_gen(0,pow(2,float_size)-1);
+						exact = float_to_hex(f1, &myfloat_h, &f1_out);
+						printf(CYAN "%ld = (0x%lx)\n" CRESET, (int64_t)f1.float_i, myfloat_h);
+					}
+				}
+				else if (choice_type == 3) {
+
+					INT_OPTION_3:
+					printf("\nINSERT INTEGER WIDTH: ");
+					scanf("%d", &integer_width);
+
+					int valid_int_width = check_input_int_width();
+					if (valid_int_width == FP_ERROR) {
+						goto INT_OPTION_3;		
 					}
 
 					for (int64_t i = ( - pow( 2, integer_width - 1 ) ) ; i < pow( 2,integer_width - 1 ) ; i++){
@@ -1209,14 +1462,32 @@ int main(unsigned int argc, char** argv) {
 					printf(CYAN "\t%ld = (0x%lx)\n" CRESET, int_input, myfloat_h);
 					
 				} 
-				else if ( choice_type == 2 ) {
-					INT_OPTION_3:
+				else if (choice_type == 2) {
+					INT_OPTION_4:
 					printf("\nINSERT INTEGER WIDTH: ");
 					scanf("%d", &integer_width);
 
 					int valid_int_width = check_input_int_width();
 					if (valid_int_width == FP_ERROR) {
-						goto INT_OPTION_3;		
+						goto INT_OPTION_4;
+					}
+
+					printf(GREEN "\nInsert the number of random operations to run: " CRESET);
+					scanf("%d", &size_rand_gen);
+					for (uint64_t i=0; i<size_rand_gen; i++){
+						f1.float_i = rand_gen(0,pow(2,float_size)-1);
+						exact = float_to_hex(f1, &myfloat_h, &f1_out);
+						printf(CYAN "%lu = (0x%lx)\n" CRESET, (int64_t)f1.float_i, myfloat_h);
+					}
+				}
+				else if (choice_type == 3) {
+					INT_OPTION_5:
+					printf("\nINSERT INTEGER WIDTH: ");
+					scanf("%d", &integer_width);
+
+					int valid_int_width = check_input_int_width();
+					if (valid_int_width == FP_ERROR) {
+						goto INT_OPTION_5;		
 					}
 
 					for (uint64_t i = 0 ; i < pow( 2,integer_width ) ; i++){
