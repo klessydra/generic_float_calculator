@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
+#include <time.h>
 
 #include "types.h"
 #include "vars.h"
@@ -31,4 +32,17 @@ int is_NaN_inf (number f) {                                                     
         }
     }
     return 0;
+}
+
+int rand_gen(int lower, int upper) {
+  static int seed_set = 0; // Flag to check if the seed has been set
+  int range = upper - lower + 1; // Calculate the range of values
+  
+  if (!seed_set) { // If the seed has not been set yet
+    srand(time(NULL)); // Seed the random number generator with the current time
+    seed_set = 1; // Set the flag to indicate that the seed has been set
+  }
+  
+  int random_num = rand() % range; // Generate a random integer within the range
+  return lower + random_num; // Scale and shift the random integer to fit within the specified range
 }

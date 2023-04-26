@@ -260,7 +260,7 @@ int check_input_rounding_mode() {
 
 int check_input_choice_type() {
 	static unsigned int error_cnt_choice_type = 0;
-	if (choice_type < 1 || choice_type > 2) {
+	if (choice_type < 1 || choice_type > 3) {
 		if (error_cnt_choice_type == 10) {
 			printf(RED "ERROR: " WHITE "Too many invalid trials, exiting! \n" CRESET);
 			exit(-1);

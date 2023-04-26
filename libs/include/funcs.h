@@ -24,4 +24,4 @@ int check_input_int_width();
 int check_input_valid_uint();
 
 int is_NaN_inf (number f);
-
+int rand_gen(int lower, int upper);
