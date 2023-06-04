@@ -219,6 +219,7 @@ int float_to_hex_2(number f, uint64_t* myfloat_h, double* f_out) {
 	}
 	else if (absolute_float == 0) { // if input float is 0 
 		*myfloat_h = sign_extract << float2_size-1;
+		exact = 1;
 		//printf(CYAN "HERE2\n");
 	}
 	else {
@@ -256,7 +257,7 @@ int float_to_hex_2(number f, uint64_t* myfloat_h, double* f_out) {
 						exact = 1;
 					}
 					if (mantissa <= mantissa_upper) {
-						round_fp(mantissa_extract, sign_extract, mantissa, mantissa_middle,  mantissa_lower, mantissa_upper, &mantissa_rounded, &exponent_rounded);
+						round_fp2(mantissa_extract, sign_extract, mantissa, mantissa_middle,  mantissa_lower, mantissa_upper, &mantissa_rounded, &exponent_rounded);
 						break;
 					}
 					mantissa_extract += 1;
