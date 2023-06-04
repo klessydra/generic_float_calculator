@@ -73,13 +73,15 @@ void parse_args(unsigned int argc, char** argv) {
 					"                                 (2)  FLOAT to INT\n"
 					"                                 (3)  FLOAT to UINT\n"
 					"                                 (4)  INT to FLOAT\n"
-					"                                 (5)  UINT to FLOAT\n"
+					"                                 (5)  UINT to FLOAT\n\n"
 					"  -fo, --file_out \n"
-					"                            Sets the output to be printed to a file\n"
+					"                            Sets the output to be printed to a file\n\n"
 					"  --single_case \n"
-					"                            Perform a single case\n"
+					"                            Perform a single case\n\n"
+					"  --random_cases \n"
+					"                            Perform random cases\n\n"
 					"  --all_cases \n"
-					"                            Perform all cases\n"
+					"                            Perform all cases\n\n"
 					"\n");
 				exit(0);
 			}
@@ -189,15 +191,23 @@ void parse_args(unsigned int argc, char** argv) {
 					file_print = 'N';
 					printf(BLUE "WRITE FILE OUT: " CRESET "NO\n");
 				}
+				else {
+					printf(RED "ERROR:" CRESET" Unknown argument to please \"-fo \\--file_out\", please choose \'Y\'/\'y\'' or \'N\'/\'n\'\n");
+				}
 			}
 			else if (strcmp(argv[i], "--single_case") == 0) {
 				choice_set  = 1;
 				choice_type = 1;
 				printf(GREEN "TEST SCOPE: " CRESET "SINGLE RESULT\n");
 			}
-			else if (strcmp(argv[i], "--all_cases") == 0) {
+			else if (strcmp(argv[i], "--random_cases") == 0) {
 				choice_set  = 1;
 				choice_type = 2;
+				printf(GREEN "TEST SCOPE: " CRESET "RANDOM SET OF RESULTS\n");
+			}
+			else if (strcmp(argv[i], "--all_cases") == 0) {
+				choice_set  = 1;
+				choice_type = 3;
 				printf(GREEN "TEST SCOPE: " CRESET "ALL RESULTS\n");
 			}
 			else  {
