@@ -2533,7 +2533,6 @@ void* op(void* src1, void* src2, void* src3, int en_print) {
     return res_ptr;
   }
   else if (f_type == F64) {
-    printf(YELLOW" \nWARNING" WHITE ": Negative 64-bit numbers are saturating to infinity for some reason, to be resolved soon\n\n" CRESET);
     float64_t s1 = *(float64_t*) src1;
     float64_t s2 = *(float64_t*) src2;
     float64_t s3 = *(float64_t*) src3;
