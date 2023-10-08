@@ -113,19 +113,19 @@ int main(int argc, char **argv) {
       if (i+1 <= argc) {
         i++;
         round_mode = strtol(argv[i], NULL, 10);
-        if (round_mode == 0) {
+        if (round_mode == 1) {
            round_mod = "RNE";
         }
-        else if (round_mode == 1) {
+        else if (round_mode == 2) {
            round_mod = "RTZ";
         }
-        else if (round_mode == 2) {
+        else if (round_mode == 3) {
            round_mod = "RDN";
         }
-        else if (round_mode == 3) {
+        else if (round_mode == 4) {
            round_mod = "RUP";
         }
-        else if (round_mode == 4) {
+        else if (round_mode == 5) {
            round_mod = "RMM";
         }
         else {
@@ -164,6 +164,40 @@ int main(int argc, char **argv) {
         random_op_count = 1000;
       }
     }
+    else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
+        printf(WHITE
+          "USAGE: reference_model [OPERATION] [INPUTS] [ARGUMENT]\n"
+          "Floating Point Reference model\n\n"
+          "Operations supported:\n"
+          "       fadd,     fsub,      frsub,    fmul,      fdiv,   frdiv,\n"
+          "       fsqrt,    frsqrt,    fmacc,    fnmacc,    fmsac,  fnmsac,\n"
+          "       fmadd,    fnamdd,    fmsub,    fnmsub,    fmin,   fmax,\n"
+          "       feq,      fne,       fle,      flt,       fge,    fgt,\n"
+          "       fcvt.x.f, fcvt.xu.f, fcvt.f.x, fcvt.f.xu, fclass\n"
+          "\n"
+          "Usage Example 1: ./reference_model fadd8_1 0x30 0x55 -r 3\n"
+          "Usage Example 2: ./reference_model fmsac8_2 0x30 0x55 0x86\n"
+          "Usage Example 3: ./reference_model fcvt.f.xu.64 5\n"
+          "Usage Example 4: ./reference_model fmul16 --random\n"
+          "Usage Example 5: ./reference_model frdiv32--random 50\n"
+          "Usage Example 6: ./reference_model fsqrt--all\n"
+          "\n" CRESET
+          "\nProgram Options: \n"
+          "  -r, --round_mode <arg>    \n"
+          "                            Sets the round mode \n"
+          "                                (1)  RNE\n"
+          "                                (2)  RTZ\n"
+          "                                (3)  RDN\n"
+          "                                (4)  RUP\n"
+          "                                (5)  RMM\n"
+          "  --random <op_count>\n"
+          "                            radomises the input of the operationn\n"
+          "                            when set with no arg, 1000 random will be done\n\n"
+          "  --all \n"
+          "                            Perform all combination of inputs on the selected operation\n\n"
+          "\n");
+        exit(0);
+    }
   }
 
   op_type_int = op_index(op_type);
@@ -173,8 +207,9 @@ int main(int argc, char **argv) {
   }
   else {
     printf("No eounding mode set, defaulting to " GREEN "RNE\n" CRESET);
-    round_mode = 0;
+    round_mode = 1;
   }
+  round_mode--; // because the round modes in "softfloat_roundingMode" start from 0
 
   black  = malloc(sizeof BLACK);
   red    = malloc(sizeof RED);
