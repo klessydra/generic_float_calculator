@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
            round_mod = "RMM";
         }
         else {
-          printf(RED "\nERROR" CRESET": Unsupported rounding mode, choose a number from 0-4\n\n");
+          printf(RED "\nERROR" CRESET": Unsupported rounding mode, choose a number from 1-5\n\n");
           exit(1);
         }
         round_set = 1;
@@ -179,8 +179,8 @@ int main(int argc, char **argv) {
           "Usage Example 2: ./reference_model fmsac8_2 0x30 0x55 0x86\n"
           "Usage Example 3: ./reference_model fcvt.f.xu.64 5\n"
           "Usage Example 4: ./reference_model fmul16 --random\n"
-          "Usage Example 5: ./reference_model frdiv32--random 50\n"
-          "Usage Example 6: ./reference_model fsqrt--all\n"
+          "Usage Example 5: ./reference_model frdiv32 --random 50\n"
+          "Usage Example 6: ./reference_model fsqrt --all\n"
           "\n" CRESET
           "\nProgram Options: \n"
           "  -r, --round_mode <arg>    \n"
@@ -1167,7 +1167,7 @@ void* op(void* src1, void* src2, void* src3, int en_print) {
     else if (op_type_int == FCVT_X_F) {
       s2 = s1;                     // in RVV, single operand instructions read vs2, so src1 is considered as src2 here
       src2_f = hex_to_float(src1); // redo the conversion to float considering src1 as if it were src2
-      res.v = f8_1_to_i8(s2, 0, true);
+      res.v = f8_1_to_i8(s2, softfloat_roundingMode, true);
       FLAGS = toBinary(softfloat_exceptionFlags, 5);
       if (en_print) {
         res_f = hex_to_float(&res);
@@ -1175,14 +1175,14 @@ void* op(void* src1, void* src2, void* src3, int en_print) {
           "\t%sfcvt.x.f(%s%le%s) = %s%d\n"
           "\t%sfcvt.x.f(%s0x%x%s) = %s0x%x  %s(%s%s%s)%s\n\n", 
           blue, op_type, 
-          white, green, src2_f.fp, white, green, res.v, 
+          white, green, src2_f.fp, white, green, (int8_t) res.v, 
           white, green, s2.v,      white, green, res.v, white, yellow, FLAGS, white, creset);
       }
     }
     else if (op_type_int == FCVT_XU_F) {
       s2 = s1;                     // in RVV, single operand instructions read vs2, so src1 is considered as src2 here
       src2_f = hex_to_float(src1); // redo the conversion to float considering src1 as if it were src2
-      res.v = f8_1_to_ui8(s2, 0, true);
+      res.v = f8_1_to_ui8(s2, softfloat_roundingMode, true);
       FLAGS = toBinary(softfloat_exceptionFlags, 5);
       if (en_print) {
         res_f = hex_to_float(&res);
@@ -1212,7 +1212,7 @@ void* op(void* src1, void* src2, void* src3, int en_print) {
     else if (op_type_int == FCVT_F_XU) {
       s2 = s1;                     // in RVV, single operand instructions read vs2, so src1 is considered as src2 here
       src2_f = hex_to_float(src1); // redo the conversion to float considering src1 as if it were src2
-      res = ui32_to_f8_1(s2.v);
+      res = ui16_to_f8_1(s2.v);
       FLAGS = toBinary(softfloat_exceptionFlags, 5);
       if (en_print) {
         res_f = hex_to_float(&res);
@@ -1604,7 +1604,7 @@ void* op(void* src1, void* src2, void* src3, int en_print) {
     else if (op_type_int == FCVT_X_F) {
       s2 = s1;                     // in RVV, single operand instructions read vs2, so src1 is considered as src2 here
       src2_f = hex_to_float(src1); // redo the conversion to float considering src1 as if it were src2
-      res.v = f8_2_to_i8(s2, 0, true);
+      res.v = f8_2_to_i8(s2, softfloat_roundingMode, true);
       FLAGS = toBinary(softfloat_exceptionFlags, 5);
       if (en_print) {
         res_f = hex_to_float(&res);
@@ -1612,14 +1612,14 @@ void* op(void* src1, void* src2, void* src3, int en_print) {
           "\t%sfcvt.x.f(%s%le%s) = %s%d\n"
           "\t%sfcvt.x.f(%s0x%x%s) = %s0x%x  %s(%s%s%s)%s\n\n", 
           blue, op_type, 
-          white, green, src2_f.fp, white, green, res.v, 
+          white, green, src2_f.fp, white, green, (int8_t) res.v, 
           white, green, s2.v,      white, green, res.v, white, yellow, FLAGS, white, creset);
       }
     }
     else if (op_type_int == FCVT_XU_F) {
       s2 = s1;                     // in RVV, single operand instructions read vs2, so src1 is considered as src2 here
       src2_f = hex_to_float(src1); // redo the conversion to float considering src1 as if it were src2
-      res.v = f8_2_to_ui8(s2, 0, true);
+      res.v = f8_2_to_ui8(s2, softfloat_roundingMode, true);
       FLAGS = toBinary(softfloat_exceptionFlags, 5);
       if (en_print) {
         res_f = hex_to_float(&res);
@@ -2027,7 +2027,7 @@ void* op(void* src1, void* src2, void* src3, int en_print) {
     else if (op_type_int == FCVT_X_F) {
       s2 = s1;                     // in RVV, single operand instructions read vs2, so src1 is considered as src2 here
       src2_f = hex_to_float(src1); // redo the conversion to float considering src1 as if it were src2
-      res.v = f16_to_i16(s2, 0, true);
+      res.v = f16_to_i16(s2, softfloat_roundingMode, true);
       FLAGS = toBinary(softfloat_exceptionFlags, 5);
       if (en_print) {
         res_f = hex_to_float(&res);
@@ -2042,7 +2042,7 @@ void* op(void* src1, void* src2, void* src3, int en_print) {
     else if (op_type_int == FCVT_XU_F) {
       s2 = s1;                     // in RVV, single operand instructions read vs2, so src1 is considered as src2 here
       src2_f = hex_to_float(src1); // redo the conversion to float considering src1 as if it were src2
-      res.v = f16_to_ui16(s2, 0, true);
+      res.v = f16_to_ui16(s2, softfloat_roundingMode, true);
       FLAGS = toBinary(softfloat_exceptionFlags, 5);
       if (en_print) {
         res_f = hex_to_float(&res);
@@ -2449,7 +2449,7 @@ void* op(void* src1, void* src2, void* src3, int en_print) {
     else if (op_type_int == FCVT_X_F) {
       s2 = s1;                     // in RVV, single operand instructions read vs2, so src1 is considered as src2 here
       src2_f = hex_to_float(src1); // redo the conversion to float considering src1 as if it were src2
-      res.v = f32_to_i32(s2, 0, true);
+      res.v = f32_to_i32(s2, softfloat_roundingMode, true);
       FLAGS = toBinary(softfloat_exceptionFlags, 5);
       if (en_print) {
         res_f = hex_to_float(&res);
@@ -2464,7 +2464,7 @@ void* op(void* src1, void* src2, void* src3, int en_print) {
     else if (op_type_int == FCVT_XU_F) {
       s2 = s1;                     // in RVV, single operand instructions read vs2, so src1 is considered as src2 here
       src2_f = hex_to_float(src1); // redo the conversion to float considering src1 as if it were src2
-      res.v = f32_to_ui32(s2, 0, true);
+      res.v = f32_to_ui32(s2, softfloat_roundingMode, true);
       FLAGS = toBinary(softfloat_exceptionFlags, 5);
       if (en_print) {
         res_f = hex_to_float(&res);
@@ -2872,7 +2872,7 @@ void* op(void* src1, void* src2, void* src3, int en_print) {
     else if (op_type_int == FCVT_X_F) {
       s2 = s1;                     // in RVV, single operand instructions read vs2, so src1 is considered as src2 here
       src2_f = hex_to_float(src1); // redo the conversion to float considering src1 as if it were src2
-      res.v = f64_to_i64(s2, 0, true);
+      res.v = f64_to_i64(s2, softfloat_roundingMode, true);
       FLAGS = toBinary(softfloat_exceptionFlags, 5);
       if (en_print) {
         res_f = hex_to_float(&res);
@@ -2887,7 +2887,7 @@ void* op(void* src1, void* src2, void* src3, int en_print) {
     else if (op_type_int == FCVT_XU_F) {
       s2 = s1;                     // in RVV, single operand instructions read vs2, so src1 is considered as src2 here
       src2_f = hex_to_float(src1); // redo the conversion to float considering src1 as if it were src2
-      res.v = f64_to_ui64(s2, 0, true);
+      res.v = f64_to_ui64(s2, softfloat_roundingMode, true);
       FLAGS = toBinary(softfloat_exceptionFlags, 5);
       if (en_print) {
         res_f = hex_to_float(&res);
