@@ -1,6 +1,5 @@
 
 #include <stdint.h>
-#include <stdio.h>
 #include "platform.h"
 #include "internals.h"
 #include "softfloat.h"
@@ -24,7 +23,6 @@ float8_1_t ui32_to_f8_1( uint32_t a )
             (shiftDist < 0)
                 ? a>>(-shiftDist) | ((uint32_t) (a<<(shiftDist & 31)) != 0)
                 : (uint_fast8_t) a<<shiftDist;
-        printf("\n%x\n\n", a);
         return softfloat_roundPackToF8_1( 0, 0x0C - shiftDist, sig );
     }
 
