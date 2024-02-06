@@ -154,7 +154,6 @@ uint_fast64_t f16_to_ui64_r_minMag( float16_t, bool );
 int_fast32_t f16_to_i32_r_minMag( float16_t, bool );
 int_fast64_t f16_to_i64_r_minMag( float16_t, bool );
 float32_t f16_to_f32( float16_t );
-float32_t bf16_to_f32( bfloat16_t );
 float64_t f16_to_f64( float16_t );
 #ifdef SOFTFLOAT_FAST_INT64
 extFloat80_t f16_to_extF80( float16_t );
@@ -197,7 +196,6 @@ uint_fast64_t f32_to_ui64_r_minMag( float32_t, bool );
 int_fast32_t f32_to_i32_r_minMag( float32_t, bool );
 int_fast64_t f32_to_i64_r_minMag( float32_t, bool );
 float16_t f32_to_f16( float32_t );
-bfloat16_t f32_to_bf16( float32_t );
 float64_t f32_to_f64( float32_t );
 #ifdef SOFTFLOAT_FAST_INT64
 extFloat80_t f32_to_extF80( float32_t );
@@ -561,6 +559,12 @@ float8_2_t bf16_to_f8_2( float16_t a );
 
 float8_1_t ui16_to_f8_1( uint16_t a );
 float8_2_t ui16_to_f8_2( uint16_t a );
+
+bfloat16_t i8_to_bf16(  int8_t a );
+bfloat16_t ui8_to_bf16( uint8_t a );
+
+int8_t bf16_to_i8(bfloat16_t input, uint_fast8_t roundingMode);
+int8_t bf16_to_ui8(bfloat16_t input, uint_fast8_t roundingMode);
 
 #ifdef __cplusplus
 }
