@@ -44,7 +44,7 @@ float8_2_t f8_1_to_f8_2( float8_1_t a )
             goto uiZ;
         }
         normExpSig = softfloat_normSubnormalF8_1Sig( frac );
-        exp = normExpSig.exp - 1;
+        exp = normExpSig.exp;
         frac = normExpSig.sig;
     }
     /*------------------------------------------------------------------------
