@@ -74,7 +74,7 @@ float8_1_t softfloat_subMagsF8_1( uint_fast8_t uiA, uint_fast8_t uiB )
                 uiZ = packToF8_1UI( signZ, 0x0F, 0 );
                 goto uiZ;
             }
-            if ( expDiff <= -5 ) {
+            if ( expDiff <= -6 ) {
                 uiZ = packToF8_1UI( signZ, expB, sigB );
                 if ( expA | sigA ) goto subEpsilon;
                 goto uiZ;
@@ -91,7 +91,7 @@ float8_1_t softfloat_subMagsF8_1( uint_fast8_t uiA, uint_fast8_t uiB )
                 if ( sigA ) goto propagateNaN;
                 goto uiZ;
             }
-            if ( 5 <= expDiff ) {
+            if ( 6 <= expDiff ) {
                 if ( expB | sigB ) goto subEpsilon;
                 goto uiZ;
             }
