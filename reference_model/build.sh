@@ -134,7 +134,6 @@ gcc -std=c99 -g reference_model.c \
                 source/conversion/f16_to_ui64.c \
                 source/conversion/f16_to_ui64_r_minMag.c \
                 source/conversion/f16_to_ui8.c \
-                source/conversion/f32_to_bf16.c \
                 source/conversion/f32_to_f128.c \
                 source/conversion/f32_to_f16.c \
                 source/conversion/f32_to_f64.c \
@@ -177,6 +176,8 @@ gcc -std=c99 -g reference_model.c \
                 source/conversion/ui64_to_f64.c \
                 source/softfloat_8/bf16_to_f8_1.c \
                 source/softfloat_8/bf16_to_f8_2.c \
+                source/softfloat_8/bf16_to_i8.c \
+                source/softfloat_8/bf16_to_ui8.c \
                 source/softfloat_8/f8_1_2_recip7_rsqrte7.c \
                 source/softfloat_8/f8_1_add.c \
                 source/softfloat_8/f8_1_classify.c \
@@ -218,6 +219,7 @@ gcc -std=c99 -g reference_model.c \
                 source/softfloat_8/f8_2_to_ui16.c \
                 source/softfloat_8/f8_2_to_ui32.c \
                 source/softfloat_8/f8_2_to_ui8.c \
+                source/softfloat_8/i8_to_bf16.c \
                 source/softfloat_8/i16_to_f8_1.c \
                 source/softfloat_8/i16_to_f8_2.c \
                 source/softfloat_8/i32_to_f8_1.c \
@@ -236,11 +238,11 @@ gcc -std=c99 -g reference_model.c \
                 source/softfloat_8/s_roundPackToF8_2.c \
                 source/softfloat_8/s_subMagsF8_1.c \
                 source/softfloat_8/s_subMagsF8_2.c \
+                source/softfloat_8/ui8_to_bf16.c \
                 source/softfloat_8/ui16_to_f8_1.c \
                 source/softfloat_8/ui16_to_f8_2.c \
                 source/softfloat_8/ui32_to_f8_1.c \
                 source/softfloat_8/ui32_to_f8_2.c \
-                source/softfloat_16/bf16_to_f32.c \
                 source/softfloat_16/f16_add.c \
                 source/softfloat_16/f16_classify.c \
                 source/softfloat_16/f16_div.c \
