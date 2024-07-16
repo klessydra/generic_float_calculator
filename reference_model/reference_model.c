@@ -43,6 +43,8 @@ char* creset;
 
 char* toBinary(int num, int bitCount);
 //long long int toBinary(int num);
+
+long long unsigned int randomIntInRange(long long unsigned int a, long long unsigned int b);
 int64_t rand_gen(int64_t lower, int64_t upper);
 
 void* src1;
@@ -83,6 +85,8 @@ unsigned int mantissa_size;
 double exp_range;
 double mnt_range;
 
+unsigned int random_op_count = 0;
+
 uint64_t operand_count;
 uint64_t mantissa_en;
 uint64_t exponent_en;
@@ -106,9 +110,9 @@ int main(int argc, char **argv) {
   char* round_mod;
   unsigned int round_set = 0;
 
-  unsigned int random_op_count = 0;
-  unsigned int do_random = 0;
-  unsigned int do_all = 0;
+  unsigned int do_random       = 0;
+  unsigned int do_smart_random = 0;
+  unsigned int do_all          = 0;
 
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i] ,"-r") == 0) {
@@ -143,7 +147,7 @@ int main(int argc, char **argv) {
     }
     else if (strcmp(argv[i] ,"--all") == 0) {
       do_all = 1;
-      if (do_random == 1) {
+      if (do_random == 1 || do_smart_random == 1) {
         printf(RED "ERROR:" CRESET " Cannot do \"all\" operations, since \"random\" mode is already set, \n");
         exit(1);
       }
@@ -151,8 +155,13 @@ int main(int argc, char **argv) {
         printf("Running operation on all combinations of input values\n");
       }
     }
-    else if (strcmp(argv[i] ,"--random") == 0) {
-      do_random = 1;
+    else if (strcmp(argv[i] ,"--random") == 0 || strcmp(argv[i] ,"--smart_random") == 0) {
+      if (strcmp(argv[i] ,"--smart_random") == 0) {
+        do_smart_random = 1;
+      }
+      else {
+        do_random = 1;
+      }
       if (do_all == 1) {
         printf("ERROR: Cannot do \"random\" operations, since \"all\" mode is already set, \n");
       }
@@ -203,8 +212,14 @@ int main(int argc, char **argv) {
           "                                (4)  RUP\n"
           "                                (5)  RMM\n"
           "  --random <op_count>\n"
-          "                            radomises the input of the operationn\n"
-          "                            when set with no arg, 1000 random will be done\n\n"
+          "                            Padomises the input of the operation.\n"
+          "                            When set with no arg, 1000 random will be done.\n\n"
+          "  --smart_random <op_count>\n"
+          "                            Performs random operations tailored for floating point numbers.\n"
+          "                            The number of ops counts done will be equally distributed on float \n"
+          "                            classification, that way special cases like Denrom, Inf, NaNs and Zero\n"
+          "                            have an equal probability of being tried out as normalized numbers"
+          "                            When set with no arg, 1000 random will be done\n\n"
           "  --all \n"
           "                            Perform all combination of inputs on the selected operation\n\n"
           "\n");
@@ -218,7 +233,7 @@ int main(int argc, char **argv) {
     printf("Round mode set to " GREEN "%s\n" CRESET, round_mod);
   }
   else {
-    printf("No eounding mode set, defaulting to " GREEN "RNE\n" CRESET);
+    printf("No rounding mode set, defaulting to " GREEN "RNE\n" CRESET);
     round_mode = 1;
   }
   round_mode--; // because the round modes in "softfloat_roundingMode" start from 0
@@ -259,7 +274,6 @@ int main(int argc, char **argv) {
   }
 
   printf("\n");
-
 
     if (f_type == F8_1) {
       src1 = malloc(sizeof(float8_1_t));
@@ -349,6 +363,96 @@ int main(int argc, char **argv) {
         softfloat_exceptionFlags = 0;
       }
     }
+    else if (do_smart_random) {
+      long long unsigned int sign         = (long long unsigned int) 1 << f_size -1;
+      long long unsigned int zero         = 0;
+      long long unsigned int denorm_min   = 1;
+      long long unsigned int denorm_max   = (long long unsigned int) pow(2,mantissa_size)-1;
+      long long unsigned int norm_min     =   (long long unsigned int)  1 << mantissa_size;
+      long long unsigned int norm_max     = (((long long unsigned int)  pow(2,exponent_size)-2) << mantissa_size) + (long long unsigned int) pow(2,mantissa_size)-1;
+      long long unsigned int inf          =  ((long long unsigned int)  pow(2,exponent_size)-1) << mantissa_size;
+      long long unsigned int snan_min     = (((long long unsigned int)  pow(2,exponent_size)-1) << mantissa_size) + 1;
+      long long unsigned int snan_max     = (((long long unsigned int)  pow(2,exponent_size)-1) << mantissa_size) + (long long unsigned int) pow(2,mantissa_size-1)-1;
+      long long unsigned int qnan_min     = (((long long unsigned int)  pow(2,exponent_size)-1) << mantissa_size) + (long long unsigned int) pow(2,mantissa_size-1);
+      long long unsigned int qnan_max     =   (long long unsigned int)  pow(2,f_size-1)-1;
+      long long unsigned int n_zero       = sign + zero ;
+      long long unsigned int n_denorm_min = sign + denorm_min ;
+      long long unsigned int n_denorm_max = sign + denorm_max ;
+      long long unsigned int n_norm_min   = sign + norm_min ;
+      long long unsigned int n_norm_max   = sign + norm_max ;
+      long long unsigned int n_inf        = sign + inf ;
+      long long unsigned int n_snan_min   = sign + snan_min ;
+      long long unsigned int n_snan_max   = sign + snan_max ;
+      long long unsigned int n_qnan_min   = sign + qnan_min ;
+      long long unsigned int n_qnan_max   = sign + qnan_max ;
+      const int totalCategories = 12;
+      int numOperands = 2;
+      //printf(GREEN"        CATEGORIES = %d\n\n"CRESET, (int) pow(totalCategories, numOperands));
+      //printf(" \
+      //  zero         = %llX\n         denorm_min   = %llX\n         denorm_max   = %llX\n         norm_min     = %llX\n         norm_max     = %llX\n \
+      //  inf          = %llX\n         snan_min     = %llX\n         snan_max     = %llX\n         qnan_min     = %llX\n         qnan_max     = %llX\n \
+      //  n_zero       = %llX\n         n_denorm_min = %llX\n         n_denorm_max = %llX\n         n_norm_min   = %llX\n         n_norm_max   = %llX\n \
+      //  n_inf        = %llX\n         n_snan_min   = %llX\n         n_snan_max   = %llX\n         n_qnan_min   = %llX\n         n_qnan_max   = %llX\n\n"
+      //      ,   zero,   denorm_min,   denorm_max,   norm_min,   norm_max,   inf,   snan_min,   snan_max,   qnan_min,   qnan_max
+      //      , n_zero, n_denorm_min, n_denorm_max, n_norm_min, n_norm_max, n_inf, n_snan_min, n_snan_max, n_qnan_min, n_qnan_max
+      //      );
+      long long unsigned int range_min[12] = {
+          zero, denorm_min, norm_min, inf, snan_min, qnan_min, n_zero, n_denorm_min, n_norm_min, n_inf, n_snan_min, n_qnan_min
+      };
+      long long unsigned int range_max[12] = {
+          zero, denorm_max, norm_max, inf, snan_max, qnan_max, n_zero, n_denorm_max, n_norm_max, n_inf, n_snan_max, n_qnan_max
+      };
+      int operationsPerPair = random_op_count / (totalCategories * totalCategories);
+      int count = 0;
+      for (int i = 0; i < totalCategories; i++) {
+        for (int j = 0; j < totalCategories; j++) {
+          // Check if both operands are single-value operands
+          if (range_min[i] == range_max[i] && range_min[j] == range_max[j]) {
+            // Perform the operation only once if both are single-value operands
+            count++;
+            long long unsigned int val_i = range_min[i]; // Same as range_max[i]
+            long long unsigned int val_j = range_min[j]; // Same as range_max[j]
+            *(uint64_t*)src1 = val_i;
+            *(uint64_t*)src2 = val_j;
+            *(uint64_t*)src3 = 0;
+            res = op(src1, src2, src3, 0);
+            printf("%.*llx\t%.*llx\t%.*lx\t(%s)\n", f_size/4, val_i, f_size/4, val_j, f_size/4, *((uint64_t*)res), FLAGS);
+            softfloat_exceptionFlags = 0;
+          }
+          else {
+            // Perform the operation multiple times as originally planned
+            for (int k = 0; k < operationsPerPair; k++) {
+              count++;
+              long long unsigned int val_i = randomIntInRange(range_min[i], range_max[i]);
+              long long unsigned int val_j = randomIntInRange(range_min[j], range_max[j]);
+              *(uint64_t*)src1 = val_i;
+              *(uint64_t*)src2 = val_j;
+              *(uint64_t*)src3 = 0;
+              res = op(src1, src2, src3, 0);
+              printf("%.*llx\t%.*llx\t%.*lx\t(%s)\n", f_size/4, val_i, f_size/4, val_j, f_size/4, *((uint64_t*)res), FLAGS);
+              softfloat_exceptionFlags = 0;
+            }
+          }
+        }
+      }
+      // Handling remaining operations if not perfectly divisible
+      int remainingOperations = random_op_count - count;
+      for (int i = 0; i < remainingOperations; i++) {
+        int idx1 = i % totalCategories; // Wrap around categories
+        int idx2 = (i / totalCategories) % totalCategories; // Wrap around categories
+        // Generate random values for the remaining operations
+        long long unsigned int val_i = randomIntInRange(range_min[idx1], range_max[idx1]);
+        long long unsigned int val_j = randomIntInRange(range_min[idx2], range_max[idx2]);
+        *(uint64_t*)src1 = val_i;
+        *(uint64_t*)src2 = val_j;
+        *(uint64_t*)src3 = 0;
+        res = op(src1, src2, src3, 0);
+        // Perform the remaining operations
+        count++;
+        printf("%.*llx\t%.*llx\t%.*lx\t(%s)\n", f_size/4, val_i, f_size/4, val_j, f_size/4, *((uint64_t*)res), FLAGS);
+        softfloat_exceptionFlags = 0;
+      }
+    }
     else { // do a single operation
       res = op(src1, src2, src3, 1);
     }
@@ -371,7 +475,28 @@ char* toBinary(int num, int bitCount) {
     return binaryRepresentation;
 }
 
+// Function to generate a random integer between a and b (inclusive)
+long long unsigned int randomIntInRange(long long unsigned int a, long long unsigned int b) {
+    // Set the seed once
+    static int seeded = 0;
+    if (!seeded) {
+        srand(time(NULL));
+        seeded = 1;
+    }
 
+    // Check for correct range
+    if (a > b) {
+        long long unsigned int temp = a;
+        a = b;
+        b = temp;
+    }
+    
+    // Generate a larger range random integer
+    long long unsigned int random = (long long unsigned int)rand() << 15 | rand();
+    long long unsigned int range = b - a + 1;
+    long long unsigned int result = random % range + a;
+    return result;
+}
 
 int64_t rand_gen(int64_t lower, int64_t upper) {
     static bool seed_set = false; // Flag to check if the seed has been set
