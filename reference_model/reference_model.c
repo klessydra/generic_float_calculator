@@ -194,7 +194,7 @@ int main(int argc, char **argv) {
           "       fclass\n"
           "\n"
           YELLOW "NOTE 1:" WHITE " For fwcvt.x.x and fncvt.x.x where \"x\" can be \"f8_1\" \"f8_2\" \"bf16\" \"f16\" \"f32\" \"f64\" \"f128\"\n"
-          YELLOW "NOTE 2:" WHITE " Only widenings to one order of magnitude are supported (i.e. f8_1->bf16, f16->32, f32->f64, f64->f128)\n"
+          YELLOW "NOTE 2:" WHITE " Only widenings and narrowing to one order of magnitude are supported (i.e. f8_1<->bf16, f8_2<->bf16, f16<->32, f32<->f64, f64<->f128)\n"
           "\n"
           "Usage Example 1: ./reference_model fadd8_1 0x30 0x55 -r 3\n"
           "Usage Example 2: ./reference_model fmsac8_2 0x30 0x55 0x86\n"
@@ -402,21 +402,21 @@ int main(int argc, char **argv) {
       long long unsigned int range_max[12] = {
           zero, denorm_max, norm_max, inf, snan_max, qnan_max, n_zero, n_denorm_max, n_norm_max, n_inf, n_snan_max, n_qnan_max
       };
-      int operationsPerPair = random_op_count / (totalCategories * totalCategories);
+      int operationsPerPair;
       int count = 0;
-      for (int i = 0; i < totalCategories; i++) {
-        for (int j = 0; j < totalCategories; j++) {
+      if (operand_count == 1) {
+        operationsPerPair = random_op_count / totalCategories;
+        for (int i = 0; i < totalCategories; i++) {
           // Check if both operands are single-value operands
-          if (range_min[i] == range_max[i] && range_min[j] == range_max[j]) {
-            // Perform the operation only once if both are single-value operands
+          if (range_min[i] == range_max[i]) {
+            // Perform the operation only once if the category is not a range, but rather a single-value operands
             count++;
             long long unsigned int val_i = range_min[i]; // Same as range_max[i]
-            long long unsigned int val_j = range_min[j]; // Same as range_max[j]
             *(uint64_t*)src1 = val_i;
-            *(uint64_t*)src2 = val_j;
+            *(uint64_t*)src2 = 0;
             *(uint64_t*)src3 = 0;
             res = op(src1, src2, src3, 0);
-            printf("%.*llx\t%.*llx\t%.*lx\t(%s)\n", f_size/4, val_i, f_size/4, val_j, f_size/4, *((uint64_t*)res), FLAGS);
+            printf("%.*llx\t%.*lx\t(%s)\n", f_size/4, val_i, f_size/4, *((uint64_t*)res), FLAGS);
             softfloat_exceptionFlags = 0;
           }
           else {
@@ -424,7 +424,26 @@ int main(int argc, char **argv) {
             for (int k = 0; k < operationsPerPair; k++) {
               count++;
               long long unsigned int val_i = randomIntInRange(range_min[i], range_max[i]);
-              long long unsigned int val_j = randomIntInRange(range_min[j], range_max[j]);
+              *(uint64_t*)src1 = val_i;
+              *(uint64_t*)src2 = 0;
+              *(uint64_t*)src3 = 0;
+              res = op(src1, src2, src3, 0);
+              printf("%.*llx\t%.*lx\t(%s)\n", f_size/4, val_i, f_size/4, *((uint64_t*)res), FLAGS);
+              softfloat_exceptionFlags = 0;
+            }
+          }
+        }
+      }
+      else if (operand_count == 2) {
+        operationsPerPair = random_op_count / (totalCategories * totalCategories);
+        for (int i = 0; i < totalCategories; i++) {
+          for (int j = 0; j < totalCategories; j++) {
+            // Check if both operands are single-value operands
+            if (range_min[i] == range_max[i] && range_min[j] == range_max[j]) {
+              // Perform the operation only once if both operands are single-values instead of ranges
+              count++;
+              long long unsigned int val_i = range_min[i]; // Same as range_max[i]
+              long long unsigned int val_j = range_min[j]; // Same as range_max[j]
               *(uint64_t*)src1 = val_i;
               *(uint64_t*)src2 = val_j;
               *(uint64_t*)src3 = 0;
@@ -432,24 +451,82 @@ int main(int argc, char **argv) {
               printf("%.*llx\t%.*llx\t%.*lx\t(%s)\n", f_size/4, val_i, f_size/4, val_j, f_size/4, *((uint64_t*)res), FLAGS);
               softfloat_exceptionFlags = 0;
             }
+            else {
+              // Perform the operation multiple times as originally planned
+              for (int k = 0; k < operationsPerPair; k++) {
+                count++;
+                long long unsigned int val_i = randomIntInRange(range_min[i], range_max[i]);
+                long long unsigned int val_j = randomIntInRange(range_min[j], range_max[j]);
+                *(uint64_t*)src1 = val_i;
+                *(uint64_t*)src2 = val_j;
+                *(uint64_t*)src3 = 0;
+                res = op(src1, src2, src3, 0);
+                printf("%.*llx\t%.*llx\t%.*lx\t(%s)\n", f_size/4, val_i, f_size/4, val_j, f_size/4, *((uint64_t*)res), FLAGS);
+                softfloat_exceptionFlags = 0;
+              }
+            }
           }
         }
       }
+      else if (operand_count == 3) {
+        operationsPerPair = random_op_count / (totalCategories * totalCategories * totalCategories);
+        for (int i = 0; i < totalCategories; i++) {
+          for (int j = 0; j < totalCategories; j++) {
+            for (int k = 0; k < totalCategories; k++) {
+              // Check if all three operands are single-value operands
+              if (range_min[i] == range_max[i] && range_min[j] == range_max[j] && range_min[k] == range_max[k]) {
+                // Perform the operation only once if all operands are single-values instead of ranges
+                count++;
+                long long unsigned int val_i = range_min[i]; // Same as range_max[i]
+                long long unsigned int val_j = range_min[j]; // Same as range_max[j]
+                long long unsigned int val_k = range_min[k]; // Same as range_max[k]
+                *(uint64_t*)src1 = val_i;
+                *(uint64_t*)src2 = val_j;
+                *(uint64_t*)src3 = val_k;
+                res = op(src1, src2, src3, 0);
+                printf("%.*llx\t%.*llx\t%.*llx\t%.*lx\t(%s)\n", f_size/4, val_i, f_size/4, val_j, f_size/4, val_k, f_size/4, *((uint64_t*)res), FLAGS);
+                softfloat_exceptionFlags = 0;
+              }
+              else {
+                // Perform the operation multiple times as originally planned
+                for (int l = 0; l < operationsPerPair; l++) {
+                  count++;
+                  long long unsigned int val_i = randomIntInRange(range_min[i], range_max[i]);
+                  long long unsigned int val_j = randomIntInRange(range_min[j], range_max[j]);
+                  long long unsigned int val_k = randomIntInRange(range_min[k], range_max[k]);
+                  *(uint64_t*)src1 = val_i;
+                  *(uint64_t*)src2 = val_j;
+                  *(uint64_t*)src3 = val_k;
+                  res = op(src1, src2, src3, 0);
+                  printf("%.*llx\t%.*llx\t%.*llx\t%.*lx\t(%s)\n", f_size/4, val_i, f_size/4, val_j, f_size/4, val_k, f_size/4, *((uint64_t*)res), FLAGS);
+                  softfloat_exceptionFlags = 0;
+                }
+              }
+            }
+          }
+        }
+      }
+
       // Handling remaining operations if not perfectly divisible
       int remainingOperations = random_op_count - count;
+      //printf(GREEN"remainingOperations = %d\n" CRESET, remainingOperations);
       for (int i = 0; i < remainingOperations; i++) {
         int idx1 = i % totalCategories; // Wrap around categories
         int idx2 = (i / totalCategories) % totalCategories; // Wrap around categories
+        int idx3 = (i / (totalCategories * totalCategories)) % totalCategories;  // Wrap around categories for third index
         // Generate random values for the remaining operations
         long long unsigned int val_i = randomIntInRange(range_min[idx1], range_max[idx1]);
         long long unsigned int val_j = randomIntInRange(range_min[idx2], range_max[idx2]);
+        long long unsigned int val_k = randomIntInRange(range_min[idx3], range_max[idx3]);
         *(uint64_t*)src1 = val_i;
         *(uint64_t*)src2 = val_j;
-        *(uint64_t*)src3 = 0;
+        *(uint64_t*)src3 = val_k;
         res = op(src1, src2, src3, 0);
         // Perform the remaining operations
         count++;
-        printf("%.*llx\t%.*llx\t%.*lx\t(%s)\n", f_size/4, val_i, f_size/4, val_j, f_size/4, *((uint64_t*)res), FLAGS);
+        if (operand_count == 1) printf("%.*llx\t%.*lx\t(%s)\n", f_size/4, val_i, f_size/4, *((uint64_t*)res), FLAGS);
+        if (operand_count == 2) printf("%.*llx\t%.*llx\t%.*lx\t(%s)\n", f_size/4, val_i, f_size/4, val_j, f_size/4, *((uint64_t*)res), FLAGS);
+        if (operand_count == 3) printf("%.*llx\t%.*llx\t%.*llx\t%.*lx\t(%s)\n", f_size/4, val_i, f_size/4, val_j, f_size/4, val_k, f_size/4,*((uint64_t*)res), FLAGS);
         softfloat_exceptionFlags = 0;
       }
     }
@@ -2479,6 +2556,70 @@ void* op(void* src1, void* src2, void* src3, int en_print) {
           "\t%sfncvt.f.xu(%s0x%x%s) = %s0x%x  %s(%s%s%s)%s\n\n", 
           blue, op_type, 
           white, green, (uint16_t)s_wide.v, white, green, res_f.fp,
+          white, green, s_wide.v, white, green, res.v, white, yellow, FLAGS, white, creset);
+      }
+    }
+    else if (op_type_int == FNCVT_X_F) {
+      s2 = s1;                     // in RVV, single operand instructions read vs2, so src1 is considered as src2 here
+      src2_f = hex_to_float(src1); // redo the conversion to float considering src1 as if it were src2
+      res.v = bf16_to_i8((bfloat16_t)s_wide, softfloat_roundingMode);
+      FLAGS = toBinary(softfloat_exceptionFlags, 5);
+      if (en_print) {
+        float_rep float_tmp;
+        f_size        = 16;
+        exponent_size = 8;
+        mantissa_size = 7;
+        bias          = 127;
+        exp_range = pow(2, exponent_size);
+        mnt_range = pow(2, mantissa_size);
+        mantissa_en = mnt_range-1;
+        exponent_en = exp_range-1;
+        float_tmp = hex_to_float(&s_wide);
+        f_size        = 8;
+        exponent_size = 5;
+        mantissa_size = 2;
+        bias          = 15;
+        exp_range = pow(2, exponent_size);
+        mnt_range = pow(2, mantissa_size);
+        mantissa_en = mnt_range-1;
+        exponent_en = exp_range-1;
+        fprintf(out1_result, "%s%s:\n"
+          "\t%sfncvt.xu.f(%s%le%s)  = %s%d\n"
+          "\t%sfncvt.xu.f(%s0x%x%s) = %s0x%x  %s(%s%s%s)%s\n\n", 
+          blue, op_type, 
+          white, green, float_tmp.fp, white, green, (int8_t)res.v,
+          white, green, s_wide.v, white, green, res.v, white, yellow, FLAGS, white, creset);
+      }
+    }
+    else if (op_type_int == FNCVT_XU_F) {
+      s2 = s1;                     // in RVV, single operand instructions read vs2, so src1 is considered as src2 here
+      src2_f = hex_to_float(src1); // redo the conversion to float considering src1 as if it were src2
+      res.v = bf16_to_ui8((bfloat16_t)s_wide, softfloat_roundingMode);
+      FLAGS = toBinary(softfloat_exceptionFlags, 5);
+      if (en_print) {
+        float_rep float_tmp;
+        f_size        = 16;
+        exponent_size = 8;
+        mantissa_size = 7;
+        bias          = 127;
+        exp_range = pow(2, exponent_size);
+        mnt_range = pow(2, mantissa_size);
+        mantissa_en = mnt_range-1;
+        exponent_en = exp_range-1;
+        float_tmp = hex_to_float(&s_wide);
+        f_size        = 8;
+        exponent_size = 5;
+        mantissa_size = 2;
+        bias          = 15;
+        exp_range = pow(2, exponent_size);
+        mnt_range = pow(2, mantissa_size);
+        mantissa_en = mnt_range-1;
+        exponent_en = exp_range-1;
+        fprintf(out1_result, "%s%s:\n"
+          "\t%sfncvt.xu.f(%s%le%s)  = %s%d\n"
+          "\t%sfncvt.xu.f(%s0x%x%s) = %s0x%x  %s(%s%s%s)%s\n\n", 
+          blue, op_type, 
+          white, green, float_tmp.fp, white, green, (uint8_t)res.v,
           white, green, s_wide.v, white, green, res.v, white, yellow, FLAGS, white, creset);
       }
     }
