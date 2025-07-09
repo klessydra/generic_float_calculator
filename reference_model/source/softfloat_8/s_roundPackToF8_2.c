@@ -5,7 +5,7 @@
 #include "internals.h"
 #include "softfloat.h"
 
-float8_2_t softfloat_roundPackToF8_2( bool sign, int_fast8_t exp, uint_fast8_t sig )
+float8_2_t softfloat_roundPackToF8_2( bool sign, int_fast8_t exp, uint_fast8_t sig, bool conv )
 {
     uint_fast8_t roundingMode;
     bool roundNearEven;
@@ -44,10 +44,52 @@ float8_2_t softfloat_roundPackToF8_2( bool sign, int_fast8_t exp, uint_fast8_t s
         } else if ( (0x1D < exp) || (0x80 <= sig + roundIncrement) ) {
             /*----------------------------------------------------------------
             *----------------------------------------------------------------*/
-            softfloat_raiseFlags(
-                softfloat_flag_overflow | softfloat_flag_inexact );
-            uiZ = packToF8_2UI( sign, 0x1F, 0 ) - ! roundIncrement;
-            goto uiZ;
+            #if OFP8_saturate == 1                      // Saturate on
+                #if OFP8_saturate_op == 1               // Saturate also the operation results, not only the conversions
+                    #if OFP8_overflow_flag == 1         // The overflow flag is triggered
+                        softfloat_raiseFlags(
+                            softfloat_flag_overflow | softfloat_flag_inexact );
+                        uiZ = packToF8_2UI( sign, 0x1E, 0x3 ) - ! roundIncrement;
+                        goto uiZ;
+                    #else                               // The overflow flag is not triggered
+                        softfloat_raiseFlags(
+                            softfloat_flag_inexact );
+                        uiZ = packToF8_2UI( sign, 0x1E, 0x3 ) - ! roundIncrement;
+                        goto uiZ;
+                    #endif
+                #else                                   // Saturate only the conversions
+                    #if OFP8_overflow_flag == 1         // The overflow flag is triggered
+                        if (conv == 1) {
+                            softfloat_raiseFlags(
+                                softfloat_flag_overflow | softfloat_flag_inexact );
+                            uiZ = packToF8_2UI( sign, 0x1E, 0x3 ) - ! roundIncrement;
+                            goto uiZ;
+                        } else {
+                            softfloat_raiseFlags(
+                                softfloat_flag_overflow | softfloat_flag_inexact );
+                            uiZ = packToF8_2UI( sign, 0x1F, 0 ) - ! roundIncrement;
+                            goto uiZ;
+                        }
+                    #else                               // The overflow flag is not triggered
+                        if (conv == 1) {
+                            softfloat_raiseFlags(
+                                softfloat_flag_inexact );
+                            uiZ = packToF8_2UI( sign, 0x1E, 0x3 ) - ! roundIncrement;
+                            goto uiZ;
+                        } else {
+                            softfloat_raiseFlags(
+                                softfloat_flag_inexact );
+                            uiZ = packToF8_2UI( sign, 0x1F, 0 ) - ! roundIncrement;
+                            goto uiZ;
+                        }
+                    #endif
+                #endif
+            #else                                       // Saturate off
+                softfloat_raiseFlags(
+                    softfloat_flag_overflow | softfloat_flag_inexact );
+                uiZ = packToF8_2UI( sign, 0x1F, 0 ) - ! roundIncrement;
+                goto uiZ;
+            #endif
         }
     }
 

@@ -107,7 +107,7 @@ float8_2_t softfloat_addMagsF8_2( uint_fast8_t uiA, uint_fast8_t uiB)
             }
         }
     }
-    return softfloat_roundPackToF8_2( signZ, expZ, sigZ );
+    return softfloat_roundPackToF8_2( signZ, expZ, sigZ, (bool) 0 );
     /*------------------------------------------------------------------------
     *------------------------------------------------------------------------*/
  propagateNaN:

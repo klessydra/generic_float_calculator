@@ -77,7 +77,7 @@ float8_2_t f8_2_mul( float8_2_t a, float8_2_t b )
         --expZ;
         sigZ <<= 1;
     }
-    return softfloat_roundPackToF8_2( signZ, expZ, sigZ );
+    return softfloat_roundPackToF8_2( signZ, expZ, sigZ, (bool) 0 );
     /*------------------------------------------------------------------------
     *------------------------------------------------------------------------*/
  propagateNaN:

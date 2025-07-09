@@ -23,7 +23,7 @@ float8_2_t ui32_to_f8_2( uint32_t a )
             (shiftDist < 0)
                 ? a>>(-shiftDist) | ((uint32_t) (a<<(shiftDist & 31)) != 0)
                 : (uint_fast8_t) a<<shiftDist;
-        return softfloat_roundPackToF8_2( 0, 0x14 - shiftDist, sig );
+        return softfloat_roundPackToF8_2( 0, 0x14 - shiftDist, sig, (bool) 1 );
     }
 
 }

@@ -101,7 +101,7 @@ float8_2_t f8_2_div( float8_2_t a, float8_2_t b )
 #else
    //algorithm
 #endif
-    return softfloat_roundPackToF8_2( signZ, expZ, sigZ );
+    return softfloat_roundPackToF8_2( signZ, expZ, sigZ, (bool) 0 );
     /*------------------------------------------------------------------------
     *------------------------------------------------------------------------*/
     /*------------------------------------------------------------------------

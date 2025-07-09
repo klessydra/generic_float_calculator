@@ -1,3 +1,19 @@
+/*============================================================================
+Copyright 2023 Sapienza University of Rome
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+=============================================================================*/
+
 #include <stdbool.h>
 #include <stdint.h>
 #include "platform.h"
@@ -113,12 +129,30 @@ float8_2_t bf16_to_f8_2( float16_t a )
         uiZ = packToF8_2UI( sign, exp, frac);
     }
     else if ( exp < 0xFF ) {
-        exp = 0x1E;
-        frac = 0x3;
-        uiZ = packToF8_2UI( sign, exp, frac);
-        inexact   = 1;
-        precision = 1;
-        overflow  = 1;
+        #if E4M3_OFP8 == 1
+            #if OFP8_saturate == 1
+                exp = 0x1E;
+                frac = 0x3;
+                uiZ = packToF8_2UI( sign, exp, frac);
+                inexact   = 1;
+                precision = 1;
+                overflow  = 1;
+            #else
+                exp = 0x1E;
+                frac = 0x3;
+                uiZ = packToF8_2UI( sign, exp, frac);
+                inexact   = 1;
+                precision = 1;
+                overflow  = 1;
+            #endif
+        #else
+            exp = 0x1E;
+            frac = 0x3;
+            uiZ = packToF8_2UI( sign, exp, frac);
+            inexact   = 1;
+            precision = 1;
+            overflow  = 1;
+        #endif
     }
     else if (exp == 0xFF) {
         if (frac) {
@@ -127,11 +161,29 @@ float8_2_t bf16_to_f8_2( float16_t a )
             uZ.ui = uiZ;
             return uZ.f;
         } else {
-            exp = 0x1F;
-            frac = 0x0;
-            uiZ = packToF8_2UI( sign, exp, frac);
-            uZ.ui = uiZ;
-            return uZ.f;
+
+            #if E4M3_OFP8 == 1
+                #if OFP8_saturate == 1
+                    exp = 0x1E;
+                    frac = 0x3;
+                    uiZ = packToF8_2UI( sign, exp, frac);
+                    inexact   = 1;
+                    precision = 1;
+                    overflow  = 1;
+                #else
+                    exp = 0x1F;
+                    frac = 0x0;
+                    uiZ = packToF8_2UI( sign, exp, frac);
+                    uZ.ui = uiZ;
+                    return uZ.f;
+                #endif
+            #else
+                exp = 0x1F;
+                frac = 0x0;
+                uiZ = packToF8_2UI( sign, exp, frac);
+                uZ.ui = uiZ;
+                return uZ.f;
+            #endif            
         }
         goto uiZ;
     }
@@ -145,10 +197,45 @@ float8_2_t bf16_to_f8_2( float16_t a )
         }
     }
  uiZ:
-    uZ.ui = uiZ + round_f8_2(sign, frac, precision, inexact, overflow);
-    if (((uZ.ui >> 2) & 0x1F) == 0x1F) {
-        softfloat_raiseFlags(softfloat_flag_overflow);
-    }
+
+    #if E4M3_OFP8 == 1
+        #if OFP8_saturate == 1
+            #if OFP8_overflow_flag == 1
+                if ((uiZ & 0x7F) == 0x7B){
+                    uZ.ui = uiZ;
+                    if ((((uiZ + round_f8_2(sign, frac, precision, inexact, overflow)) >> 2) & 0x1F) == 0x1F) {
+                        softfloat_raiseFlags(softfloat_flag_overflow);
+                    }
+                } else {
+                    uZ.ui = uiZ + round_f8_2(sign, frac, precision, inexact, overflow);
+                    if (((uZ.ui >> 2) & 0x1F) == 0x1F) {
+                        softfloat_raiseFlags(softfloat_flag_overflow);
+                    }
+                }
+            #else
+                if ((uiZ & 0x7F) == 0x7B){
+                    uZ.ui = uiZ;
+                } else {
+                    uZ.ui = uiZ + round_f8_2(sign, frac, precision, inexact, overflow);
+                }
+            #endif
+        #else
+            #if OFP8_overflow_flag == 1
+                uZ.ui = uiZ + round_f8_2(sign, frac, precision, inexact, overflow);
+                if (((uZ.ui >> 2) & 0x1F) == 0x1F) {
+                    softfloat_raiseFlags(softfloat_flag_overflow);
+                }
+            #else
+                uZ.ui = uiZ + round_f8_2(sign, frac, precision, inexact, overflow);
+            #endif
+        #endif
+    #else //IEEE-like
+        uZ.ui = uiZ + round_f8_2(sign, frac, precision, inexact, overflow);
+        if (((uZ.ui >> 2) & 0x1F) == 0x1F) {
+            softfloat_raiseFlags(softfloat_flag_overflow);
+        }
+    #endif
+
     //printf("uiZ = 0x%x, sign = %d, exp = 0x%lx, frac = 0x%x\n", uiZ, sign, exp, frac);
     return uZ.f;
 }

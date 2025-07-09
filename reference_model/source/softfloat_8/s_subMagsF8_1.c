@@ -1,3 +1,18 @@
+/*============================================================================
+Copyright 2023 Sapienza University of Rome
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+=============================================================================*/
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -34,12 +49,19 @@ float8_1_t softfloat_subMagsF8_1( uint_fast8_t uiA, uint_fast8_t uiB )
     if ( ! expDiff ) {
         /*--------------------------------------------------------------------
         *--------------------------------------------------------------------*/
-    if ( expA == 0x0F ) {
-            if ( sigA | sigB ) goto propagateNaN;
-            softfloat_raiseFlags( softfloat_flag_invalid );
-            uiZ = defaultNaNF8_1UI;
-            goto uiZ;
-        }
+        #if E4M3_OFP8 == 1
+            if ( expA == 0x0F ) {
+                if ( sigA == 0x07 || sigB == 0x07 ) goto propagateNaN;
+            }
+        #else
+            if ( expA == 0x0F ) {
+                if ( sigA | sigB ) goto propagateNaN;
+                softfloat_raiseFlags( softfloat_flag_invalid );
+                uiZ = defaultNaNF8_1UI;
+                goto uiZ;
+            }
+        #endif
+
         sigDiff = sigA - sigB;
         if ( ! sigDiff ) {
             uiZ =
@@ -69,11 +91,19 @@ float8_1_t softfloat_subMagsF8_1( uint_fast8_t uiA, uint_fast8_t uiB )
             /*----------------------------------------------------------------
             *----------------------------------------------------------------*/
             signZ = ! signZ;
-            if ( expB == 0x0F ) {
-                if ( sigB ) goto propagateNaN;
-                uiZ = packToF8_1UI( signZ, 0x0F, 0 );
-                goto uiZ;
-            }
+
+            #if E4M3_OFP8 == 1
+                if ( expB == 0x0F ) {
+                    if ( sigB == 0x07 ) goto propagateNaN;
+                }
+            #else
+                if ( expB == 0x0F ) {
+                    if ( sigB ) goto propagateNaN;
+                    uiZ = packToF8_1UI( signZ, 0x0F, 0 );
+                    goto uiZ;
+                }
+            #endif
+            
             if ( expDiff <= -6 ) {
                 uiZ = packToF8_1UI( signZ, expB, sigB );
                 if ( expA | sigA ) goto subEpsilon;
@@ -87,10 +117,18 @@ float8_1_t softfloat_subMagsF8_1( uint_fast8_t uiA, uint_fast8_t uiB )
             /*----------------------------------------------------------------
             *----------------------------------------------------------------*/
             uiZ = uiA;
-            if ( expA == 0x0F ) {
-                if ( sigA ) goto propagateNaN;
-                goto uiZ;
-            }
+
+            #if E4M3_OFP8 == 1
+                if ( expA == 0x0F ) {
+                    if ( sigA == 0x07 ) goto propagateNaN;
+                }
+            #else
+                if ( expA == 0x0F ) {
+                    if ( sigA ) goto propagateNaN;
+                    goto uiZ;
+                }
+            #endif
+
             if ( 6 <= expDiff ) {
                 if ( expB | sigB ) goto subEpsilon;
                 goto uiZ;
@@ -107,12 +145,21 @@ float8_1_t softfloat_subMagsF8_1( uint_fast8_t uiA, uint_fast8_t uiB )
         if ( sig16Z & 0xFF ) {
             sigZ |= 1;
         } else {
-            if ( ! (sigZ & 0x7) && ((unsigned int) expZ < 0x0E) ) {
-                sigZ >>= 3;
-                goto pack;
-            }
+
+            #if E4M3_OFP8 == 1
+                //if ( ! (sigZ & 0x7) && ((unsigned int) expZ < 0x0F) ) { //PROVA
+                if ( ! (sigZ & 0xF) && ((unsigned int) expZ < 0x0F) ) { //PROVA
+                    sigZ >>= 3;
+                    goto pack;
+                }
+            #else
+                if ( ! (sigZ & 0x7) && ((unsigned int) expZ < 0x0E) ) {
+                    sigZ >>= 3;
+                    goto pack;
+                }
+            #endif
         }
-        return softfloat_roundPackToF8_1( signZ, expZ, sigZ );
+        return softfloat_roundPackToF8_1( signZ, expZ, sigZ, (bool) 0 );
     }
     /*------------------------------------------------------------------------
     *------------------------------------------------------------------------*/

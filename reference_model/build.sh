@@ -8,7 +8,7 @@ else
     mkdir ../build
 fi
 
-gcc -std=c99 -g reference_model.c \
+gcc -std=c99 -g -O0 reference_model.c \
              -o ../build/reference_model \
                 source/common/fall_maxmin.c \
                 source/common/fall_reciprocal.c \

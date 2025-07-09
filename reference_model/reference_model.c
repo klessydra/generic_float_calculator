@@ -602,7 +602,10 @@ int64_t rand_gen(int64_t lower, int64_t upper) {
 void float_type(char* op_type) {
   int narrowing = 0;
   int widening  = 0;
-
+  if (!op_type) {
+        fprintf(stderr, "float_type: op_type is NULL\n");
+        exit(EXIT_FAILURE);
+  }
   if (strstr(op_type, "fwcvt.f8_1.bf16") || 
       strstr(op_type, "fwcvt.x.f.8_1")   || 
       strstr(op_type, "fwcvt.xu.f.8_1"))  {
@@ -1186,18 +1189,29 @@ float_rep hex_to_float(void* src) {
     src_f.fp = pow(2, (double)src_f.exponent-(bias-bias_compeensate)) * src_f.mantissa_f;  // calculate the float
   }
   if (src_f.exponent == exp_range-1) { // if the exponent bits are all ones
-    if (src_f.mantissa == 0) { // if the mantissa bits are all zero
-      if (src_f.sign == 0) {
-        src_f.fp = INFINITY;  // return inf
+    
+    if (f_type == F8_1){
+      if ( src_f.mantissa == 0x07 ) { // if the mantissa bits are all zero
+        src_f.fp = - 0.0 / 0.0; // return a -NaN
+        src_f.fp = -src_f.fp;   // the standard does not dictate the sign of the NaN, but we choose positive sign, which is why we negate the gcc output which always returns a negative NaN
+      }
+
+    } else {
+      if (src_f.mantissa == 0) { // if the mantissa bits are all zero
+        if (src_f.sign == 0) {
+          src_f.fp = INFINITY;  // return inf
+        }
+        else {
+          src_f.fp = -INFINITY; // return -inf
+        }
       }
       else {
-        src_f.fp = -INFINITY; // return -inf
+        src_f.fp = - 0.0 / 0.0; // return a -NaN
+        src_f.fp = -src_f.fp;   // the standard does not dictate the sign of the NaN, but we choose positive sign, which is why we negate the gcc output which always returns a negative NaN
       }
     }
-    else {
-      src_f.fp = - 0.0 / 0.0; // return a -NaN
-      src_f.fp = -src_f.fp;   // the standard does not dictate the sign of the NaN, but we choose positive sign, which is why we negate the gcc output which always returns a negative NaN
-    }
+
+
   }
   return src_f;
 }

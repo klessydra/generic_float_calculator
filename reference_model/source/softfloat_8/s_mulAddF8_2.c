@@ -151,7 +151,7 @@ float8_2_t softfloat_mulAddF8_2( uint_fast8_t uiA, uint_fast8_t uiB, uint_fast8_
         }
     }
  roundPack:
-    return softfloat_roundPackToF8_2( signZ, expZ, sigZ );
+    return softfloat_roundPackToF8_2( signZ, expZ, sigZ, (bool) 0 );
     /*------------------------------------------------------------------------
     *------------------------------------------------------------------------*/
     propagateNaN_ABC:

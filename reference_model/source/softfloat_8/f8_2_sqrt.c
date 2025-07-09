@@ -54,15 +54,15 @@ float8_2_t f8_2_sqrt( float8_2_t a)
         if ( ! sigA ) return a;
         switch(sigA){
             case 0x1: {
-             return softfloat_roundPackToF8_2( 0, 6, 0x40 );  
+             return softfloat_roundPackToF8_2( 0, 6, 0x40, (bool) 0 );  
              break; 
             }
             case 0x2: {
-             return softfloat_roundPackToF8_2( 0, 6, 0x5A );  
+             return softfloat_roundPackToF8_2( 0, 6, 0x5A, (bool) 0 );  
              break;
             }
             case 0x3: {
-             return softfloat_roundPackToF8_2( 0, 6, 0x6E );  
+             return softfloat_roundPackToF8_2( 0, 6, 0x6E, (bool) 0 );  
              break;
             }
         };
@@ -77,7 +77,7 @@ float8_2_t f8_2_sqrt( float8_2_t a)
     sigZ = softfloat_f8_2_sqrt_odd[sigA];
    }
 
-   return softfloat_roundPackToF8_2( 0, expZ, sigZ );
+   return softfloat_roundPackToF8_2( 0, expZ, sigZ, (bool) 0 );
    /*------------------------------------------------------------------------
     *------------------------------------------------------------------------*/
     invalid:
